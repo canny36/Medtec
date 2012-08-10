@@ -17,6 +17,8 @@
         return @"";
     }
     
+    
+    
      NSRange dateTag = [dateString rangeOfString:@"("];
     if (dateTag.location != NSNotFound) 	
     {
