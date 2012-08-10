@@ -1,0 +1,282 @@
+// !$*UTF8*$!
+{
+	73194BB815AC56EF00D893A2 /* Medtec medical inc */ = {
+		isa = PBXExecutable;
+		activeArgIndices = (
+		);
+		argumentStrings = (
+		);
+		autoAttachOnCrash = 1;
+		breakpointsEnabled = 0;
+		configStateDict = {
+		};
+		customDataFormattersEnabled = 1;
+		dataTipCustomDataFormattersEnabled = 1;
+		dataTipShowTypeColumn = 1;
+		dataTipSortType = 0;
+		debuggerPlugin = GDBDebugging;
+		disassemblyDisplayState = 0;
+		dylibVariantSuffix = "";
+		enableDebugStr = 1;
+		environmentEntries = (
+		);
+		executableSystemSymbolLevel = 0;
+		executableUserSymbolLevel = 0;
+		libgmallocEnabled = 0;
+		name = "Medtec medical inc";
+		showTypeColumn = 0;
+		sourceDirectories = (
+		);
+	};
+	73194BD215AC570600D893A2 /* Source Control */ = {
+		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
+		scmConfiguration = {
+			repositoryNamesForRoots = {
+				"" = "";
+			};
+		};
+	};
+	73194BD315AC570600D893A2 /* Code sense */ = {
+		isa = PBXCodeSenseManager;
+		indexTemplatePath = "";
+	};
+	7383C79614B185D600C10A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013DDC1520654600EA18F7 /* LoginViewController.h */;
+		name = "LoginViewController.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 865;
+		vrLoc = 502;
+	};
+	7383C79714B185D600C10A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013DDD1520654600EA18F7 /* LoginViewController.m */;
+		name = "LoginViewController.m: 135";
+		rLen = 0;
+		rLoc = 4154;
+		rType = 0;
+		vrLen = 1038;
+		vrLoc = 8867;
+	};
+	7383C79814B185D600C10A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013DE915206E6800EA18F7 /* MainViewController.h */;
+		name = "MainViewController.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1221;
+		vrLoc = 587;
+	};
+	7383C79914B185D600C10A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E1F15208FD700EA18F7 /* RegisterPatientViewController.h */;
+		name = "RegisterPatientViewController.h: 31";
+		rLen = 0;
+		rLoc = 916;
+		rType = 0;
+		vrLen = 928;
+		vrLoc = 2016;
+	};
+	7383C79B14B185D600C10A41 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E2015208FD700EA18F7 /* RegisterPatientViewController.m */;
+		name = "RegisterPatientViewController.m: 29";
+		rLen = 23;
+		rLoc = 682;
+		rType = 0;
+		vrLen = 985;
+		vrLoc = 449;
+	};
+	73897B6415AC612400BC2F79 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013DEA15206E6800EA18F7 /* MainViewController.m */;
+		name = "MainViewController.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 881;
+		vrLoc = 0;
+	};
+	73897B6515AC612400BC2F79 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E091520754E00EA18F7 /* MainTableViewCell.h */;
+		name = "MainTableViewCell.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 336;
+		vrLoc = 0;
+	};
+	73897B6615AC612400BC2F79 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E0A1520754E00EA18F7 /* MainTableViewCell.m */;
+		name = "MainTableViewCell.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 722;
+		vrLoc = 0;
+	};
+	73897B6715AC612400BC2F79 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E271520908300EA18F7 /* AppFooterView.h */;
+		name = "AppFooterView.h: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 510;
+		vrLoc = 0;
+	};
+	73897B6815AC612400BC2F79 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E281520908300EA18F7 /* AppFooterView.m */;
+		name = "AppFooterView.m: 1";
+		rLen = 0;
+		rLoc = 0;
+		rType = 0;
+		vrLen = 1064;
+		vrLoc = 0;
+	};
+	73D51B9B14B96B3C00D8CD4E /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = F0013E2015208FD700EA18F7 /* RegisterPatientViewController.m */;
+		name = "RegisterPatientViewController.m: 31";
+		rLen = 0;
+		rLoc = 766;
+		rType = 0;
+		vrLen = 1491;
+		vrLoc = 10757;
+	};
+	F0013DB5152064A200EA18F7 /* Project object */ = {
+		activeBuildConfigurationName = Debug;
+		activeExecutable = 73194BB815AC56EF00D893A2 /* Medtec medical inc */;
+		activeTarget = F0013DBD152064A200EA18F7 /* Medtec medical inc */;
+		codeSenseManager = 73194BD315AC570600D893A2 /* Code sense */;
+		executables = (
+			73194BB815AC56EF00D893A2 /* Medtec medical inc */,
+		);
+		perUserDictionary = {
+			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					483,
+					20,
+					48,
+					43,
+					43,
+					20,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+					PBXFileDataSource_Target_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 347695919;
+			PBXWorkspaceStateSaveDate = 347695919;
+		};
+		perUserProjectItems = {
+			7383C79614B185D600C10A41 /* PBXTextBookmark */ = 7383C79614B185D600C10A41 /* PBXTextBookmark */;
+			7383C79714B185D600C10A41 /* PBXTextBookmark */ = 7383C79714B185D600C10A41 /* PBXTextBookmark */;
+			7383C79814B185D600C10A41 /* PBXTextBookmark */ = 7383C79814B185D600C10A41 /* PBXTextBookmark */;
+			7383C79914B185D600C10A41 /* PBXTextBookmark */ = 7383C79914B185D600C10A41 /* PBXTextBookmark */;
+			7383C79B14B185D600C10A41 /* PBXTextBookmark */ = 7383C79B14B185D600C10A41 /* PBXTextBookmark */;
+			73897B6415AC612400BC2F79 /* PBXTextBookmark */ = 73897B6415AC612400BC2F79 /* PBXTextBookmark */;
+			73897B6515AC612400BC2F79 /* PBXTextBookmark */ = 73897B6515AC612400BC2F79 /* PBXTextBookmark */;
+			73897B6615AC612400BC2F79 /* PBXTextBookmark */ = 73897B6615AC612400BC2F79 /* PBXTextBookmark */;
+			73897B6715AC612400BC2F79 /* PBXTextBookmark */ = 73897B6715AC612400BC2F79 /* PBXTextBookmark */;
+			73897B6815AC612400BC2F79 /* PBXTextBookmark */ = 73897B6815AC612400BC2F79 /* PBXTextBookmark */;
+			73D51B9B14B96B3C00D8CD4E /* PBXTextBookmark */ = 73D51B9B14B96B3C00D8CD4E /* PBXTextBookmark */;
+		};
+		sourceControlManager = 73194BD215AC570600D893A2 /* Source Control */;
+		userBuildSettings = {
+		};
+	};
+	F0013DBD152064A200EA18F7 /* Medtec medical inc */ = {
+		activeExec = 0;
+		executables = (
+			73194BB815AC56EF00D893A2 /* Medtec medical inc */,
+		);
+	};
+	F0013DDC1520654600EA18F7 /* LoginViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 650}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{502, 865}";
+		};
+	};
+	F0013DDD1520654600EA18F7 /* LoginViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1573, 4069}}";
+			sepNavSelRange = "{4154, 0}";
+			sepNavVisRange = "{8867, 1038}";
+		};
+	};
+	F0013DE915206E6800EA18F7 /* MainViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 715}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{587, 1221}";
+		};
+	};
+	F0013DEA15206E6800EA18F7 /* MainViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 2015}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 881}";
+		};
+	};
+	F0013E091520754E00EA18F7 /* MainTableViewCell.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 376}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 336}";
+		};
+	};
+	F0013E0A1520754E00EA18F7 /* MainTableViewCell.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 494}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 722}";
+		};
+	};
+	F0013E1F15208FD700EA18F7 /* RegisterPatientViewController.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {661, 1157}}";
+			sepNavSelRange = "{916, 0}";
+			sepNavVisRange = "{2016, 928}";
+		};
+	};
+	F0013E2015208FD700EA18F7 /* RegisterPatientViewController.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {1230, 11596}}";
+			sepNavSelRange = "{766, 0}";
+			sepNavVisRange = "{10757, 1491}";
+		};
+	};
+	F0013E271520908300EA18F7 /* AppFooterView.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {652, 376}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 510}";
+		};
+	};
+	F0013E281520908300EA18F7 /* AppFooterView.m */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {901, 1066}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRange = "{0, 1064}";
+		};
+	};
+}
