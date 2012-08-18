@@ -7,7 +7,7 @@
 //
 #import <Foundation/Foundation.h>
 
-extern NSMutableDictionary *global_userDetails;
+
 
 
 @interface GetProviderIDs : NSObject

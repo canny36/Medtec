@@ -9,6 +9,7 @@
 #import "SearchPatientTableViewCell.h"
 #import "SearchPatientViewController.h"
 #import "PatientInfo.h"
+#import "Util.h"
 
 @implementation SearchPatientTableViewCell
 
@@ -52,11 +53,14 @@
 
 -(void)loadData:(PatientInfo*)info{
     
-    self.name.text = info.firstname;
-    self.dob.text = info.dob;
-    self.phone.text = [NSString stringWithFormat:@"%d",info.phoneNo];
+   self.name.text = info.firstname;
+   self.dob.text = info.dob;
+   self.phone.text = [NSString stringWithFormat:@"%d",info.phoneNo];
+   self.insuranceName.text = info.insuranceName;   
+   self.encountersCount.text = [NSString stringWithFormat:@"%d",info.encountersCount];
+   self.lastVisitDate.text = info.lvDate;
   
-}
+ }
 
 - (void)dealloc
 {

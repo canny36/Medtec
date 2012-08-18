@@ -10,24 +10,47 @@
 #import "AppHeaderView.h"
 #import "EncounterTableCell.h"
 #import "AccessoryTableViewCell.h"
+#import "MedTecNetwork.h"
+#import "Provider.h"
+#import "Accessory.h"
+@interface EditEncountersViewController()
+
+
+-(void)getEncounter;
+-(id)getValue:(NSString*)key:(NSDictionary*)bundle;
+-(void)getEncounter;
+-(NSString*)getProviderName:(int)_providerId;
+-(void)getEncounters;
+-(void)onDeliveryTypeSelection:(UIButton*)btn;
+-(void)filldata:(NSDictionary*)dict;
+@end
+
+
+#define DELIVERY_NURING @"to nursing facility"
+#define DELIVERY_SHIPPING @"Shipping service"
+#define DELIVERY_DTOB @"directly to beneficiary"
+
+
 
 @implementation EditEncountersViewController
+
+static UIImage *checkedImage;
+static UIImage *uncheckedImage;
+
+@synthesize patientID , encounterID;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+      
     }
     return self;
 }
 
 - (void)didReceiveMemoryWarning
 {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc that aren't in use.
+  [super didReceiveMemoryWarning];
 }
 
 #pragma mark - View lifecycle
@@ -35,13 +58,235 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
-    [scrollView setContentSize:CGSizeMake(1000, 2000)];
-   /* appHeaderView = [[AppHeaderView alloc] initWithFrame:CGRectMake(0, 0, 1024, 50)];
-    [appHeaderView.signOutButton addTarget:self action:@selector(signOutButtonClicked) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:appHeaderView];*/
+        [scrollView setContentSize:CGSizeMake(700, 700)];
+    
+    appdelegate = (Medtec_medical_incAppDelegate*)[[UIApplication sharedApplication] delegate];
+    accessoryTable.delegate = self;
+    accessoryTable.dataSource = self;
+    [accessoryTable reloadData];
+    
+    checkedImage = [UIImage imageNamed:@"CheckBoxHL.png"];
+    uncheckedImage = [UIImage imageNamed:@"checkBox.png"];
+
+    
+    self.navigationController.navigationBar.backItem.hidesBackButton = NO;
+//     [self getEncounters];
+    [self getEncounter];
 }
 
+-(void)filldata:(NSDictionary*)dict{
+//    {
+//        "EncounterID": 8,
+//        "PatientID": 74,
+//        "EquipID": null,
+//        "Date": null,
+//        "Notes": null,
+//        "Equip_Options": null,
+//        "Presc_Physician": null,
+//        "Delivery_Method": null,
+//        "Start_Refill_Date": null,
+//        "Equip_Inspected_By": null,
+//        "Equip_Deliv_Date": null,
+//        "Facility_Name": null,
+//        "Facility_Address": null,
+//        "Diagnosis_Codes": null,
+//        "Est_Treatment_Dur": null,
+//        "Equip_Serial_Num": null,
+//        "Type_Of_Equip": null,
+//        "Drug": null,
+//        "HCPCS_Code": null,
+//        "J_Code": null,
+//        "Po_Patient_Sign": null,
+//        "Po_Patient_Sign_Date": null,
+//        "Po_CompanyRep_Sign": null,
+//        "Po_Company_Rep_Sign_Date": null,
+//        "Po_Equip_Received_Date": null,
+//        "Mcr_Beneficiary_Sign": null,
+//        "Mcr_Beneficiary_Sign_Date": null,
+//        "Mcr_Beneficiary_Name": null,
+//        "Mcr_Notes": null,
+//        "Pdr_Patient_Sign": null,
+//        "Pdr_Patient_Sign_Date": null,
+//        "Pdr_Legalguardian_Sign": null,
+//        "Pdr_Legalguardian_Name": null,
+//        "Pii_Patient_Sign": null,
+//        "Pii_Patient_Sign_Date": null,
+//        "Pii_Legalguardian_Sign": null,
+//        "Pii_Reason_PatientUnsign": null,
+//        "Pii_Guardian_Relation": null,
+//        "Pii_Guardian_Firstname": null,
+//        "Pii_Guardian_Lastname": null,
+//        "Pii_Guardian_Address1": null,
+//        "Pii_Guardian_Address2": null,
+//        "Pii_Guardian_City": null,
+//        "Pii_Guardian_State": null,
+//        "Pii_Guardian_Zip": null,
+//        "Pii_Guardian_Email": null,
+//        "Pii_Guardian_Phone": null,
+//        "Ptn_Physician_Sign": null,
+//        "Ptn_Physician_Sign_Date": null,
+//        "Ptn_Physician_Name": null,
+//        "Ptn_Intravenous_Conti_Times": null,
+//        "Ptn_Intravenous_Conti_Days": null,
+//        "Ptn_Continu_Administrat": null,
+//        "Ptn_Continu_Adminstrat_IFno": null,
+//        "Ptn_Intravenous_Infusion": null,
+//        "Ptn_Presc_Of_Equip": null,
+//        "Dmeif_Supplier_Sign": null,
+//        "Dmeif_Supplier_Sign_Date": null,
+//        "Dmeif_Initial_Date": null,
+//        "Dmeif_Revised_Date": null,
+//        "Dmeif_Recertification_Date": null,
+//        "StatusID": null,
+//        "patnt": null,
+//        "equip": null
+//    }
+    
+    diagnosisCodeTxtField.text = [self getValue:@"Diagnosis_Codes" :dict];
+    typeOfInfusionPumpTxtField.text = [self getValue:@"Type_Of_Equip" :dict];
+    drugTxtField.text = [self getValue:@"Drug" :dict];
+    estimatedTreatDurationTxtField.text = [self getValue:@"Est_Treatment_Dur" :dict];
+       pumpSerialTxtField.text = [self getValue:@"Equip_Serial_Num" :dict];
+    hcpcsCodeTxtField.text = [self getValue:@"HCPCS_Code" :dict];
+    jCodeTxtField.text = [self getValue:@"J_Code" :dict];
+//    providerTxtField.text = [[self getProviderName:[self getValue:@"" :dict]]];
+   
+    
+    NSString *value = [self getValue:@"Equip_Options" :dict];
+    if ([value isEqualToString:@"Rental"]) {
+        rentButton.tag = 1;
+        [rentButton setImage:checkedImage forState:UIControlStateNormal];
+    }else{
+       buyButton.tag = 1;
+      [buyButton setImage:checkedImage forState:UIControlStateNormal];
+
+    }
+    
+    value = [self getValue:@"Delivery_Method" :dict];
+   
+    if ([value isEqualToString:DELIVERY_DTOB]) {
+        
+       beneficiaryButton.tag =1;
+       [beneficiaryButton setImage:checkedImage forState:UIControlStateNormal];
+       [self onDeliveryTypeSelection:beneficiaryButton];
+
+    }else if([value isEqualToString:DELIVERY_NURING]){
+        
+        nursingButton.tag =1;
+        [nursingButton setImage:checkedImage forState:UIControlStateNormal];
+        [self onDeliveryTypeSelection:nursingButton];
+         
+    }else if([value isEqualToString:DELIVERY_SHIPPING]){
+        
+        shippingButton.tag = 1;
+        [shippingButton setImage:checkedImage forState:UIControlStateNormal];
+        [self onDeliveryTypeSelection:shippingButton];
+        
+    }
+  
+}
+
+-(NSString*)getProviderName:(int)_providerId{
+    NSMutableArray *array = appdelegate.providersArray;
+    for (int i = 0 , size = [array count]; i< size ; i++) {
+        Provider *provider = [array objectAtIndex:i];
+        if (provider.userId == _providerId) {
+          return provider.fullName;
+        }
+    }
+    return @"";
+}
+
+-(id)getValue:(NSString*)key:(NSDictionary*)bundle{
+    
+    id value = [bundle objectForKey:key];
+    if (value != nil && value != [NSNull null]) {
+        if ([value isKindOfClass:[NSNumber class]]) {
+            value = [NSString stringWithFormat:@"%d",[value intValue]];
+        }
+        return value;
+    }
+    return @""; 
+}
+
+
+-(void)getEncounter{
+    MedTecNetwork *medtecNetwork = [[MedTecNetwork alloc]init];
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    [bundle setValue:[NSNumber numberWithInt:patientID] forKey:@"PatientID"];
+     [bundle setValue:[NSNumber numberWithInt:encounterID] forKey:@"EncounterID"];
+    [medtecNetwork getSinglePatientEncounter:bundle :self];
+}
+
+
+#pragma mark - GETEncounters
+-(void)getEncounters{
+    MedTecNetwork *medtecNetwork = [[MedTecNetwork alloc]init];
+    
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    
+    [bundle setObject: [NSNumber numberWithInt:patientID] forKey:@"PatientID"];
+    [medtecNetwork getPatientAllEncounters:bundle :self];
+}
+
+
+
+
+#pragma mark - onCheckboxSelection
+
+-(void)onDeliveryTypeSelection:(UIButton*)btn{
+    
+    NSLog(@" onDeliverySelection ");
+    
+    if (btn == beneficiaryButton) {
+        
+        NSLog(@" onDeliverySelection %d",1);
+        shippingButton.tag = 0;
+        nursingButton.tag=0;
+        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        [shippingButton setImage:image forState:UIControlStateNormal];
+        [nursingButton setImage:image forState:UIControlStateNormal];
+    }else if(btn == shippingButton){
+        NSLog(@" onDeliverySelection %d",2);
+        beneficiaryButton.tag = 0;
+        nursingButton.tag=0;
+        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        [beneficiaryButton setImage:image forState:UIControlStateNormal];
+        [nursingButton setImage:image forState:UIControlStateNormal];
+    }else if(btn == nursingButton){
+        NSLog(@" onDeliverySelection %d",3);
+        shippingButton.tag = 0;
+        beneficiaryButton.tag=0;
+        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        [beneficiaryButton setImage:image forState:UIControlStateNormal];
+        [shippingButton setImage:image forState:UIControlStateNormal];
+    }
+}
+
+
+
+
+#pragma mark - NetworkDelegate
+-(void)onSuccess:(id)result:(int)call{
+    
+    switch (call) {
+        case CALL_SINGLEENCOUNTER:
+            [self filldata:result];
+            break;
+            
+        default:
+            break;
+    }
+    
+}
+-(void)onError:(NSString*)errorMsg :(int)call{
+    
+}
+-(void)onConnectionTimeOut{
+    
+}
+
+#pragma mark - TAble view delegate methods
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
@@ -69,7 +314,7 @@
 {
     if (tableView== encounterListTable) 
         return 3;
-    return 3;
+    return appdelegate.accessoryArray != nil ? appdelegate.accessoryArray.count : 0;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -157,49 +402,18 @@
             }						
             
         } 
-        switch (indexPath.row) 
-        {
-            case 0:
-            {
-                //[cell.accessoryButton setImage:[UIImage imageNamed:@"CheckBoxHL.png"] forState:UIControlStateNormal];
-                cell.accessoryName.text=@"Cassette";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Summit Medical";
-                cell.part.text=@"220139";                
-            }
-                break;
-            case 1:
-            {
-                cell.accessoryName.text=@"Batteries";
-                cell.quantity.text=@"02";
-                cell.manufacturer.text=@"Panasonic";
-                cell.part.text=@"AA";                
-            }
-                break;
-            case 2:
-            {
-                cell.accessoryName.text=@"Drug Baq";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Metric Co";
-                cell.part.text=@"58719";                
-            }
-                break;
-            case 3:
-            {
-                cell.accessoryName.text=@"Carry Pouch";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Summit Medical";
-                cell.part.text=@"220409";
-            }
-                break;
-            default:
-                break;
-        }     
         
+        Accessory *accessory = [appdelegate.accessoryArray objectAtIndex:indexPath.row];
+        
+        cell.accessoryName.text = accessory.accessoryName;
+        cell.manufacturer.text = accessory.manufacturer;
+        cell.part.text = accessory.part;
+        cell.quantity.text =[ NSString stringWithFormat:@"%d",accessory.quantity];
+               
         return cell;
     }
     
-    
+    return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath

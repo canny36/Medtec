@@ -15,7 +15,7 @@
 @class RegisterPatientViewController;
 
 
-extern NSMutableDictionary *global_userDetails;
+
 
 @interface SearchPatientDetailsViewController : UIViewController <UITextFieldDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate,UIAlertViewDelegate>
 

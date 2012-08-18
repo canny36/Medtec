@@ -32,10 +32,13 @@
 
 -(IBAction)viewdemo:(id)sender
 {
+    
+    ((UIButton*)sender).tag = self.tag; 
     [mainViewController demography:sender];
 }
 -(IBAction)viewEncounter:(id)sender
 {
+    ((UIButton*)sender).tag = self.tag; 
     [mainViewController newEncounterFromMessage:sender];
 }
 -(IBAction)replyViaEmail:(id)sender

@@ -20,7 +20,11 @@
 #import "MedTecNetwork.h"
 #import "GetProviderIDs.h"
 #import "PatientInfo.h"
+#import "PopoverController.h"
+#import "EditEncountersViewController.h"
 
+#define HEIGHT_SEARCH_ROW_CELL 50
+ 
 @interface SearchPatientViewController()
 
 -(void)updateTable:(NSMutableArray*)array;
@@ -28,7 +32,7 @@
 -(NSMutableDictionary*)createRequestBundle;
 -(void)showProgress :(NSString*)message;
 -(void)hideProgress;
-
+-(void)showPopOver:(id)sender;
 @end
 
 
@@ -259,6 +263,37 @@
     }
 }
 
+-(void)didSelectRow:(int)row{
+    Provider *provider =  [appDelegate.providersArray objectAtIndex:row];
+    selectProviderTxt.text = provider.fullName; 
+    [popOverController dismissPopoverAnimated:NO];
+}
+
+#pragma mark - PopOverMethods 
+-(void)showPopOver:(id)sender{
+    
+    UITextField *field = (UITextField*)sender;
+    PopoverController *controller = [[PopoverController alloc]init];
+    NSMutableArray *array = [[NSMutableArray alloc]init];
+    
+    for (Provider *provider in appDelegate.providersArray) {
+        [array addObject:provider.fullName];
+        
+    }
+    controller.array = array;
+    controller.delegate = self;
+    if (popOverController == nil) {
+        popOverController = [[UIPopoverController alloc]initWithContentViewController:controller];
+        popOverController.popoverContentSize = CGSizeMake(150,150);
+        popOverController.delegate = self;
+    }
+
+    [popOverController presentPopoverFromRect:field.frame inView:self.view permittedArrowDirections:UIPopoverArrowDirectionDown animated:YES];
+    
+}
+
+
+
 #pragma mark - TextField delegate methods
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -272,9 +307,11 @@
     storeTextField = textField;
      if((textField == dobTxt) || (textField == date1Txt) || (textField == date2Txt) || (textField == selectProviderTxt)) 
     {
-        [storeTextField resignFirstResponder];
-        [textField resignFirstResponder];
-        [self popView:400];
+//        [storeTextField resignFirstResponder];
+//        [textField resignFirstResponder];
+//        [self popView:400];
+        
+        
     }
     else
          [self popView:2000];
@@ -289,7 +326,20 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
      storeTextField = textField;
-    if((textField == dobTxt) || (textField == date1Txt) || (textField == date2Txt) || (textField == selectProviderTxt)) 
+    
+    BOOL testCode = YES;
+    
+    if (testCode == YES && textField == selectProviderTxt) {
+        
+        [insurenceIdTxt resignFirstResponder];
+        [firstNameTxt resignFirstResponder];
+        [lastNameTxt resignFirstResponder];
+        [phoneTxt resignFirstResponder];
+        
+        [equipmentNameTxt resignFirstResponder];
+        [self showPopOver:textField];   
+        
+    }else if((textField == dobTxt) || (textField == date1Txt) || (textField == date2Txt)) 
     {
         [insurenceIdTxt resignFirstResponder];
         [firstNameTxt resignFirstResponder];
@@ -298,6 +348,8 @@
        
         [equipmentNameTxt resignFirstResponder];
         [self popView:400];
+        
+        
         return NO;
     }
     else
@@ -340,16 +392,30 @@
 
 #pragma mark -seach , validate , create buffer methods
 
+-(IBAction)clearFileds:(id)sender{
+    
+    selectProviderTxt.text = @"";;
+    firstNameTxt.text = @"";
+    lastNameTxt.text=@"";
+   dobTxt.text=@"";
+   equipmentNameTxt.text=@"";
+    insurenceIdTxt.text=@"";
+    date1Txt.text=@"";
+    date2Txt.text=@"";
+   phoneTxt.text=@"";
+    
+}
+
 -(IBAction)searchPatients
 {
         
     [self showProgress:@"Searching .."];
     MedTecNetwork *medtecNetwork =  [MedTecNetwork shareInstance];
-//  [medtecNetwork searchPatients:[self createRequestBundle] :self];
-    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+  [medtecNetwork searchPatients:[self createRequestBundle] :self];
+//    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
 //  [bundle setObject: [NSNumber numberWithInt:7] forKey:@"EncounterID"];
-    [bundle setObject: [NSNumber numberWithInt:18] forKey:@"PatientID"];    
-    [medtecNetwork getPatientAllEncounters:bundle:self];
+//    [bundle setObject: [NSNumber numberWithInt:18] forKey:@"PatientID"];    
+//    [medtecNetwork getPatientAllEncounters:bundle:self];
     
 }
 
@@ -371,11 +437,16 @@
 //    public   DateTime FromDate { get; set; }
 //    public   DateTime ToDate { get; set; }
     
+
+   
     
      NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    [bundle setObject:[NSNumber numberWithInt:appDelegate.loginInfo.practiceID] forKey:@"PracticeID"];
+
+    
     if (appDelegate.providersArray != nil && [appDelegate.providersArray count] > 0) {
         Provider *provider = [appDelegate.providersArray objectAtIndex:providersPicker.tag];
-        [bundle setObject:[NSNumber numberWithInt:provider.practiceId] forKey:@"PracticeID"];
+              [bundle setObject:[NSNumber numberWithInt:provider.userId] forKey:@"ProviderID"];
     }
     
     if (![firstNameTxt.text isEqualToString:@""]) {
@@ -383,7 +454,7 @@
     }
     
     if (![lastNameTxt.text isEqualToString:@""]) {
-        [bundle setObject:firstNameTxt.text forKey:@"LastName"];
+        [bundle setObject:lastNameTxt.text forKey:@"LastName"];
     }
     
     if (![phoneTxt.text isEqualToString:@""]) {
@@ -391,7 +462,7 @@
     }
     
     if (![dobTxt.text isEqualToString:@""]) {
-        [bundle setObject:dobTxt.text forKey:@"FirstName"];
+        [bundle setObject:dobTxt.text forKey:@"Date_Of_Birth"];
     }
     
     if (![insurenceIdTxt.text isEqualToString:@""]) {
@@ -443,9 +514,8 @@
     
     [self hideProgress];
     
-    BOOL test = YES;
-    
-    NSLog(@" SUCCESSFULLY GOT DATA  - %@ ",result);
+     
+//    NSLog(@" SUCCESSFULLY GOT DATA  - %@ ",result);
     NSArray *arrayBundle = nil;
     
     if ([result isKindOfClass:[NSArray class]]) {
@@ -466,11 +536,14 @@
     }
         
      patientInfoArray = [[NSMutableArray alloc]init];
-     [patientInfoArray addObject:[PatientInfo testPatientInfo]];
+//     [patientInfoArray addObject:[PatientInfo testPatientInfo]];
+    
+    int count  = [patientInfoArray count];
+     NSLog(@"Size of array %d",count);
      for (NSDictionary *patientBundle in arrayBundle) {
         PatientInfo *info = [[PatientInfo alloc]initWithBundle:patientBundle];
         [patientInfoArray addObject:[info retain]];
-         NSLog(@" Patient info name %@ ",info.firstname);
+      
 //        [info release];
     }
     
@@ -523,7 +596,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 70;
+    return HEIGHT_SEARCH_ROW_CELL;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -544,7 +617,7 @@
         cell.searchViewController = self;
         PatientInfo *_patientInfo = [[patientInfoArray objectAtIndex:indexPath.row]retain];
         
-        NSLog(@" PAtient info name at %d - %@ ",indexPath.row , _patientInfo.firstname);
+      
         cell.patientInfo  = _patientInfo ;
         [cell loadData:_patientInfo];
     }
@@ -576,10 +649,25 @@
 }
 -(void)newEncounter:(id)sender:(PatientInfo*)info
 {
-    NewEncountersViewController *newEncountersViewController = [[NewEncountersViewController alloc] initWithNibName:@"EncounterViewController" bundle:nil];
-    newEncountersViewController.info = info;
-    [self.navigationController pushViewController:newEncountersViewController animated:YES];
-    [newEncountersViewController release];
+    
+    if(info.encountersCount > 0){
+                  
+        EditEncountersViewController *controller = [[EditEncountersViewController alloc]initWithNibName:@"EditEncounterViewController" bundle:nil];
+        controller.patientID = info.patientId;
+        controller.encounterID = info.encounterID;
+        [self.navigationController pushViewController:controller animated:YES];
+        [controller release];
+        
+    }else{
+        NewEncountersViewController *newEncountersViewController = [[NewEncountersViewController alloc] initWithNibName:@"EncounterViewController" bundle:nil];
+        newEncountersViewController.info = info;
+        [self.navigationController pushViewController:newEncountersViewController animated:YES];
+        [newEncountersViewController release];
+    }
+//    NewEncountersViewController *newEncountersViewController = [[NewEncountersViewController alloc] initWithNibName:@"EncounterViewController" bundle:nil];
+//    newEncountersViewController.info = info;
+//    [self.navigationController pushViewController:newEncountersViewController animated:YES];
+//    [newEncountersViewController release];
 
 }
 -(void)demography:(id)sender:(PatientInfo*)patientInfo{

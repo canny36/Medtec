@@ -11,7 +11,6 @@
 @class MainViewController;
 #import "MedTecNetwork.h"
 
-extern NSMutableDictionary *global_userDetails;
 
 @interface LoginViewController : UIViewController <UITextFieldDelegate,NetworkDelegate>
 

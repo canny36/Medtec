@@ -467,8 +467,9 @@
     
     if ([loginResponseDict count] >0)
     {
-        [global_userDetails removeAllObjects];
-        [global_userDetails addEntriesFromDictionary:loginResponseDict];
+        appDelegate.loginInfo = [[LoginInfo alloc]initWithDictionary:loginResponseDict];
+        
+       
         MainViewController *mController = [[MainViewController alloc] init];
         [mainViewController setSharedMainViewData:mController];
         [self.navigationController pushViewController:mController animated:YES];

@@ -39,7 +39,7 @@
             NSString *dateString = [dateFormatter stringFromDate:date];
             [dateFormatter release]; 
             
-            NSLog(@"\n Date from Util after conversion is %@",dateString);
+//            NSLog(@"\n Date from Util after conversion is %@",dateString);
             
             return dateString;
         }

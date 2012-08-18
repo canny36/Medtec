@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "TdCalendarView.h"
+#import "MedTecNetwork.h"
 @class Medtec_medical_incAppDelegate;
 @class RegisterPatientViewController;
 @class AppHeaderView;
@@ -16,10 +17,10 @@
 @class CaptureSignatureViewController;
 @class SearchEquipmentViewController;
 
-extern NSMutableDictionary *global_userDetails;
+
 
 @protocol CalendarViewDelegate;
-@interface MainViewController : UIViewController <UITextFieldDelegate,CalendarViewDelegate>
+@interface MainViewController : UIViewController <UITextFieldDelegate,CalendarViewDelegate,NetworkDelegate>
 
 {
     
@@ -31,6 +32,8 @@ extern NSMutableDictionary *global_userDetails;
     SearchEquipmentViewController  *searchEquipmentViewController;
     AppHeaderView     *appHeaderView;
     TdCalendarView    *tdCalenderView;
+    
+    NSMutableArray *billerInfoArray;
     
     UIImageView *tableBackgroundView;
     NSMutableArray *titlesArray;

@@ -76,6 +76,25 @@ static MedTecNetwork *instance;
     [self getdataFromServerWithURl:[NSURL URLWithString:URL_GETPATIENTINFO] :bundle];
 }
 
+-(void)getAllEquipments:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate{
+    
+    curCall = CALL_EQUIPMENTS;
+    NSLog(@" get patient info %@ ", URL_GETPRACTICEQUIPMENTS);
+    
+    delegate = _delegate;
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_GETPRACTICEQUIPMENTS] :bundle];
+
+}
+
+-(void)getAccessories:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate{
+    
+    curCall = CALL_ACCESSORIES;
+    NSLog(@" get patient info %@ ", URL_GETACCESSORIES);
+    
+    delegate = _delegate;
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_GETACCESSORIES] :bundle];
+    
+}
 
 -(void)editPatientInfo:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
     curCall = CALL_EDITPATIENT;
@@ -86,15 +105,29 @@ static MedTecNetwork *instance;
 
 -(void)searchPatients:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
     curCall = CALL_SEARCH;
-    NSLog(@" Searchpatients url =  %@",URL_ALLPATIENTS);
+    NSLog(@" Searchpatients url =  %@",URL_SEARCH_PATIENT);
     delegate = _delegate;
-    [self getdataFromServerWithURl:[NSURL URLWithString:URL_ALLPATIENTS] :bundle];
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_SEARCH_PATIENT] :bundle];
 }
 
 -(void)registerPatients:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
     curCall = CALL_REGISTER;
      delegate = _delegate;
     [self getdataFromServerWithURl:[NSURL URLWithString:URL_REGISTER] :bundle];
+
+}
+
+
+-(void)getBillerMsgs:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
+    curCall = CALL_BILLERS;
+    delegate = _delegate;
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_GetBillerMessages] :bundle];
+}
+
+-(void)createPatientNewEncounter:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate{
+    curCall = CALL_CREATE_NEW_ENCOUNTER;
+    delegate = _delegate;
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_CreatePatientNewEncounter] :bundle];
 
 }
 

@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-extern NSMutableDictionary *global_userDetails;
 @interface AppFooterView : UIView 
 {
     UIButton *checkMarkButton;

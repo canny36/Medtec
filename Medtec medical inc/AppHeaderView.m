@@ -7,6 +7,7 @@
 //
 
 #import "AppHeaderView.h"
+#import "Medtec_medical_incAppDelegate.h"
 
 @implementation AppHeaderView
 @synthesize signOutButton;
@@ -16,8 +17,11 @@
     if (self) 
     {
         // Initialization code
+        
+        Medtec_medical_incAppDelegate *appDelegate = (Medtec_medical_incAppDelegate*)[[UIApplication sharedApplication] delegate];
+        
         NSString *name = @"";
-        [name stringByAppendingString:[NSString stringWithFormat:@"%@ %@",[global_userDetails objectForKey:@"FirstName"],[global_userDetails objectForKey:@"LastName"]]];
+        [name stringByAppendingString:[NSString stringWithFormat:@"%@ %@",appDelegate.loginInfo.firstName,appDelegate.loginInfo.lastName]];
         
         headerBackgroundImageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 1024, 50)];
         headerBackgroundImageView.image = [UIImage imageNamed:@"Header bg.png"];

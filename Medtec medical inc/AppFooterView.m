@@ -7,6 +7,7 @@
 //
 
 #import "AppFooterView.h"
+#import "Medtec_medical_incAppDelegate.h"
 
 
 @implementation AppFooterView
@@ -31,9 +32,12 @@
         agreedTermsAndConcentLabel.backgroundColor = [UIColor clearColor];
         [self addSubview:agreedTermsAndConcentLabel];
         
+        Medtec_medical_incAppDelegate *appDelegate = (Medtec_medical_incAppDelegate*)[[UIApplication sharedApplication] delegate];
+        
         NSString *name = @"";
-        [name stringByAppendingString:[NSString stringWithFormat:@"%@ %@",[global_userDetails objectForKey:@"FirstName"],[global_userDetails objectForKey:@"LastName"]]];
+        [name stringByAppendingString:[NSString stringWithFormat:@"%@ %@",appDelegate.loginInfo.firstName,appDelegate.loginInfo.lastName]];
         patientNameLabel = [[UILabel alloc] initWithFrame:CGRectMake(450, 10, 200, 30)];
+        
         patientNameLabel.textColor = [UIColor whiteColor];
         patientNameLabel.text = name;
         patientNameLabel.backgroundColor = [UIColor clearColor];

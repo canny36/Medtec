@@ -298,51 +298,7 @@
 
 -(IBAction)deleteButtonClicked:(id)sender
 {
-    fromDeleteMethod = YES;
-
-    NSMutableDictionary *questionDict = [[NSMutableDictionary alloc]init];
-    //[questionDict setObject:@"1" forKey:@"PracticeID"];
-    
-     [questionDict setObject:[global_userDetails objectForKey:@"PracticeID"] forKey:@"PracticeID"];    
-    
-    [questionDict setObject:[NSString stringWithFormat:@"%@",[selecteddictionary objectForKey:@"PatientID"]] forKey:@"PatientID"];
-    
-     id jsonRequest = [questionDict JSONRepresentation];   
-    
-    NSLog(@"\nDelete patient request is %@",questionDict);
-
-//    NSURL *url = [NSURL URLWithString:@"http://192.168.1.100/TestingApps/MedtecMobilesServices/DeletePatientInfo"];    
-    
-       NSURL *url = [NSURL URLWithString:@"http://www.medtecp3.com/MedtecMobilesServices/DeletePatientInfo"];
-    
-    searchPatientdeleteRequest = [NSMutableURLRequest requestWithURL:url
-                                              cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-    
-    
-    NSData *searchPatientdeleteData = [NSData dataWithBytes:[jsonRequest UTF8String] length:[jsonRequest length]];
-    
-    [searchPatientdeleteRequest setHTTPMethod:@"POST"];
-    [searchPatientdeleteRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [searchPatientdeleteRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [searchPatientdeleteRequest setValue:[NSString stringWithFormat:@"%d", [searchPatientdeleteData length]] forHTTPHeaderField:@"Content-Length"];        
-    [searchPatientdeleteRequest setHTTPBody: searchPatientdeleteData];
-    
-    if (searchPatientdeleteConnection != nil)
-    {
-        [searchPatientdeleteConnection release];
-    }
-    
-    searchPatientdeleteConnection = [[NSURLConnection alloc]initWithRequest:searchPatientdeleteRequest delegate:self];
-    
-    
-    searchPatientdeleteWebServiceData = [[NSMutableData data] retain];	
-    
-    if (deletetimer  != nil)
-    {
-        deletetimer = nil;
-    }
-    deletetimer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(cancelConnection:) userInfo:searchPatientdeleteConnection repeats:NO];
-    
+      
     
     
 }

@@ -42,13 +42,14 @@
     NSString *firstname;
     NSString *lastname;
     NSString *fromDate;
-    int insuranceId;
+    NSString *insuranceId;
     int patientId;
     int patientStatusId;
     int phoneNo;
     int practiceId;
     NSString *toDate;
-    
+    NSString *lvDate;
+    int encountersCount;
 }
 
 @property(nonatomic,retain ,readonly)NSString *date;
@@ -60,13 +61,14 @@
 @property(nonatomic,retain ,readonly)NSString *firstname;
 @property(nonatomic,retain ,readonly)NSString *lastname;
 @property(nonatomic,retain ,readonly)NSString *fromDate;
-@property(readonly)int insuranceId;
-@property(readonly)int patientId;
+@property(nonatomic ,retain,readonly)NSString *insuranceName;
+@property(readwrite)int patientId;
 @property(readonly)int patientStatusId;
 @property(readonly)int phoneNo;
-@property(readonly)int practiceId;
+@property(readwrite)int practiceId;
+@property(readonly)int encountersCount;
 @property(nonatomic,retain ,readonly)NSString *toDate;
-
+@property(nonatomic,retain ,readonly)NSString *lvDate;
 - (id)initWithBundle:(NSDictionary*)bundle;
 +(PatientInfo*)testPatientInfo;
 

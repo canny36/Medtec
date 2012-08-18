@@ -15,13 +15,12 @@
 @synthesize window=_window;
 @synthesize mainNavigationController;
 @synthesize providersArray;
+@synthesize loginInfo;
+@synthesize accessoryArray;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     // Override point for customization after application launch.
-    
-    global_userDetails = [[NSMutableDictionary alloc]initWithCapacity:0];
-   
     
     loginViewController = [[LoginViewController alloc] init];
     mainNavigationController = [[UINavigationController alloc] initWithRootViewController:loginViewController];
@@ -154,8 +153,9 @@
 - (void)dealloc
 {
     [_window release];
-   
-    [global_userDetails release];
+    [providersArray release];
+    [accessoryArray release];
+    
     [super dealloc];
 }
 

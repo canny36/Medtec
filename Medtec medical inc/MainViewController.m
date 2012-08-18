@@ -19,9 +19,17 @@
 #import "JSON.h"
 #import "MessageTableViewCell.h"
 #import "NewEncountersViewController.h"
+#import "MedTecNetwork.h"
+#import "BillerInfo.h"
+#import "EditEncountersViewController.h"
 
 #define kMainTableCellHeight 130
 
+@interface MainViewController()
+
+
+-(void)getMillerMsgs;
+@end
 
 @implementation MainViewController
 @synthesize originalTableHeight;
@@ -169,6 +177,40 @@ static MainViewController *mainViewControllerSharedData;
     [gData providerIdsMethod];
     
     
+    [self getMillerMsgs];
+    
+    
+}
+
+
+-(void)getMillerMsgs{
+    
+    LoginInfo *info =  appDelegate.loginInfo;
+    
+    MedTecNetwork *medtecNetwork = [MedTecNetwork shareInstance];
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    [bundle setValue:[NSNumber numberWithInt:info.practiceID] forKey:@"PracticeID"];
+    [medtecNetwork getBillerMsgs:bundle :self];
+    
+}
+
+#pragma mark - Network delegate methods
+
+-(void)onSuccess:(id)result:(int)call{
+    switch (call) {
+        case CALL_BILLERS:
+           billerInfoArray = [BillerInfo collection:result];
+            [messageTable reloadData];
+            break;
+            
+        default:
+            break;
+    }
+}
+-(void)onError:(NSString*)errorMsg :(int)call{
+    
+}
+-(void)onConnectionTimeOut{
     
 }
 
@@ -187,7 +229,10 @@ static MainViewController *mainViewControllerSharedData;
     if (tableView==visitsTable) {
         return 5;
     }
-    return 1;//return [encountersArray count];
+    if (billerInfoArray != nil) {
+        return [billerInfoArray count];
+    }
+    return 0;//return [encountersArray count];
 
 }
 
@@ -300,23 +345,19 @@ static MainViewController *mainViewControllerSharedData;
             
         }	
         
-        switch (indexPath.row) 
-        {
-            case 0:
-            {
-                 cell.encounterLabel.text=@"7/28";
-                 cell.patientName.text=@"John Doe";
-                 cell.message.numberOfLines=3;
-                 cell.message.text=@"Missing emergency contact";               
-                 cell.status.text=@"New";
-            }
-            break;
-                
-            default:
-                break;
+        if (billerInfoArray != nil) {
+          
+            BillerInfo *info = [billerInfoArray objectAtIndex:indexPath.row];
+            NSLog(@" BillerInfo %@ ",info.msgDesc);
+            cell.encounterLabel.text= info.date;
+            cell.patientName.text=info.patientName;
+            cell.message.numberOfLines=3;
+            cell.message.text=info.msgDesc;               
+            cell.status.text=info.statusCode;
+            cell.mainViewController=self; 
+            cell.tag = indexPath.row;
+           
         }
-        
-        cell.mainViewController=self; 
         
         return cell;       
         
@@ -361,14 +402,30 @@ static MainViewController *mainViewControllerSharedData;
 
 -(void)newEncounterFromMessage:(id)sender
 {
-    NewEncountersViewController *newEncountersViewController = [[NewEncountersViewController alloc] initWithNibName:@"EncounterViewController" bundle:nil];
-    [self.navigationController pushViewController:newEncountersViewController animated:YES];
-    [newEncountersViewController release];
+    int tag = ((UIButton*)sender).tag;
+    
+    BillerInfo *info = [billerInfoArray objectAtIndex:tag];
+    EditEncountersViewController *controller = [[EditEncountersViewController alloc]initWithNibName:@"EditEncounterViewController" bundle:nil];
+    controller.patientID = info.patientID;
+    
+    controller.encounterID = info.encounterId;
+    [self.navigationController pushViewController:controller animated:YES];
+    [controller release];
+
     
 }
--(void)demography:(id)sender{
+-(void)demography:(id)sender {
+    
+    int tag = ((UIButton*)sender).tag;
+    
+    BillerInfo *info = [billerInfoArray objectAtIndex:tag];
     
     RegisterPatientViewController *rController = [[RegisterPatientViewController alloc]initWithNibName:@"RegisterPatientViewController" bundle:nil];
+    rController.fromEditCall = YES;
+    PatientInfo *pinfo = [[PatientInfo alloc]init];
+    pinfo.patientId = info.patientID;
+    pinfo.practiceId = info.practiceID;
+    rController.patientInfo = pinfo;
     [self.navigationController pushViewController:rController animated:YES];
     [rController release];
     

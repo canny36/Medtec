@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "MedTecNetwork.h"
 #import "PatientInfo.h"
-
+#import "InsuranceView.h"
 
 
 @class Medtec_medical_incAppDelegate;
@@ -17,9 +17,7 @@
 @class DemographicsView;
 @class AppFooterView;
 
-extern NSMutableDictionary *global_userDetails;
-
-@interface RegisterPatientViewController : UIViewController <UITextFieldDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,UINavigationControllerDelegate , NetworkDelegate , UIAlertViewDelegate>
+@interface RegisterPatientViewController : UIViewController <UITextFieldDelegate,UIActionSheetDelegate,UIImagePickerControllerDelegate,InsuranceDelegate ,UINavigationControllerDelegate , NetworkDelegate , UIAlertViewDelegate>
 {
     Medtec_medical_incAppDelegate *appDelegate;
     AppHeaderView     *appHeaderView;
@@ -91,10 +89,7 @@ extern NSMutableDictionary *global_userDetails;
     IBOutlet UITextField *subscriberName;
     IBOutlet UILabel *relationShipLabel;
     IBOutlet UITextField *relationShip;
-    BOOL isSelf;
-    BOOL isDependent;
-    
-    
+    IBOutlet UIView *insuranceHolder;
     IBOutlet UIImageView *patientPicture;
     IBOutlet UIView *patientImageView;
     IBOutlet UIImageView *driverLicenseImage;
@@ -102,6 +97,8 @@ extern NSMutableDictionary *global_userDetails;
     IBOutlet UIImageView *insurancecardImage2;
     IBOutlet UIPickerView *relationPicker;
     NSMutableArray *relationPickerArray;
+    
+    IBOutlet UIButton *addInsuranceBtn;
 
 }
 
@@ -118,6 +115,7 @@ extern NSMutableDictionary *global_userDetails;
 -(void)callRegisterWebServices;
 -(void)cancelConnection:(NSTimer *)myTimer;
 -(IBAction)addOrEditDemography;
+-(IBAction)addInsurance:(id)sender;
 -(void)setAnimationToScrollView;
 -(void)popView:(int)value :(NSString *)name;
 

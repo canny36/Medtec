@@ -17,6 +17,8 @@
 #import "AccessoryTableViewCell.h"
 #import "Provider.h"
 #import "SignatureView.h"
+#import "MedTecNetwork.h"
+#import "Accessory.h"
 
 @interface NewEncountersViewController()
     
@@ -25,10 +27,28 @@
 -(void)oniiSelection:(UIButton*)btn;
 -(void)onPurchaseTypeSelection:(UIButton*)btn;
 -(void)fillPatientInfo:(PatientInfo*)info;
+-(NSMutableDictionary*)createRequestForNewEncounter1;
+-(NSString*)checkValidation;
+-(void)showAlert:(NSString*)message;
+-(void)initDefaults;
+-(void)getPracticeEquipments;
+-(void)showProgress :(NSString*)message;
+-(void)hideProgress;
+-(void)getEncounters;
+-(void)getAccessories;
 
 @end
 
+
+#define DELIVERY_NURING @"to nursing facility"
+#define DELIVERY_SHIPPING @"Shipping service"
+#define DELIVERY_DTOB @"directly to beneficiary"
+
 @implementation NewEncountersViewController
+
+static UIImage *checkedImage;
+static UIImage *uncheckedImage;
+
 @synthesize patientId,patientDictionary,info;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -58,6 +78,8 @@
 - (void)dealloc
 {
     [createEncounterDict release];
+    [progressAlert release];
+    
     [super dealloc];
 }
 
@@ -81,23 +103,21 @@
     if (info != nil) {
       [self fillPatientInfo:info];
     }
-   
     
-    [bgScrollView setContentSize:CGSizeMake(965, 850)];
+    [self initDefaults];
+    
+        
+    [bgScrollView setContentSize:CGSizeMake(965,650)];
     appDelegate=(Medtec_medical_incAppDelegate *)[[UIApplication sharedApplication]delegate];
     
+       
     //adding calender view
     tdView=[[TdCalendarView alloc]initWithFrame:CGRectMake(400, 2000, 320, 260)];
     tdView.backgroundColor=[UIColor colorWithRed:210/255.0 green:209/255.0 blue:213/255.0 alpha:1.0];
     tdView.calendarViewDelegate=self; 
     createEncounterDict=[[NSMutableDictionary alloc] initWithCapacity:0];
     
-    //[self testData];
-    equipResponseDict = [[NSMutableDictionary alloc] initWithCapacity:0];
-    equipPickerArray=[[NSMutableArray alloc] init];
-    pickerIndex=0;
-    [self.view addSubview:equipPicker];
-    equipPicker.center = CGPointMake(self.view.frame.size.width/2, 2000);
+
     
     [self.view addSubview:toolBar];
     toolBar.center = CGPointMake(self.view.frame.size.width/2, 2000);
@@ -139,24 +159,178 @@
 }
 
 
+#pragma mark -
+#pragma mark - Init defaults
+
+-(void)initDefaults{
+    
+    
+   int enc_count =  info.encountersCount;
+    if (enc_count == 0) {
+        encounterListTable.hidden = YES;
+        encounterHeadedView.hidden = YES;
+     CGRect frame =  bgScrollView.frame;
+        frame.origin.y = 220;
+        bgScrollView.frame = frame;
+    }else{
+        encounterListTable.dataSource = self;
+        encounterListTable.delegate = self;
+        
+       
+        
+    }
+    
+     [self getEncounters];
+    
+    if (appDelegate.accessoryArray != nil) {
+        [accessoryTable reloadData];
+    }else{
+        [self getAccessories];
+    }
+  
+   checkedImage = [UIImage imageNamed:@"CheckBoxHL.png"];
+   uncheckedImage = [UIImage imageNamed:@"checkBox.png"];
+    
+   hcpcsCodeTxtField.text = @"E0781";   
+   providerTxtField.tag = -1;
+    
+    NSLocale *usLocale = [[NSLocale alloc] initWithLocaleIdentifier:@"en_US"];
+    NSString *dateFormat = [NSDateFormatter dateFormatFromTemplate:@"MM/dd/yyyy" options:0 locale:usLocale];
+   NSDateFormatter *formatter = [[NSDateFormatter alloc]init];
+    formatter.dateFormat = dateFormat;
+    
+    
+   NSDate *today = [NSDate date];
+    
+   NSString *todayDateString =   [formatter stringFromDate:today];
+    
+    
+    startDateTxtField.text = todayDateString;
+    
+    contiAdminYesButton.tag = 1;
+    contiAdminNoButton.tag =0;
+    
+    intravenousInfusionNoButton.tag = 0;
+    intravenousInfusionYesButton.tag =1;
+    
+    typeOfInfusionPumpTxtField.text = @"ambit";
+    
+    rentButton.tag = 1;
+    [rentButton setImage:checkedImage forState :UIControlStateNormal];
+    
+    nursingButton.tag = 1;
+    [nursingButton setImage:checkedImage forState:UIControlStateNormal ];
+    
+    [self onDeliveryTypeSelection:nursingButton];
+     
+}
+
 #pragma mark -Save Encounter
 
 -(void)saveencounter
 {
     
-    NSLog(@"\nSave Encounter");
-    
-    SignatureView *sigView=[[SignatureView alloc] initWithFrame:CGRectMake(300, 100, 400, 400)];
-    //sigView.backgroundColor=[UIColor redColor];
-    [self.view addSubview:sigView];
-    
-    
-    
-    
-    
+  NSString *invalidField =  [self checkValidation];
+    if (![invalidField isEqualToString:@""]) {
+        [self showAlert:invalidField];
+        return;
+    }else{
+        
+        [self showProgress:@"Sending .."];
+        
+        NSMutableDictionary *bundle = [self createRequestForNewEncounter1];
+        MedTecNetwork *medtectNetwork = [[MedTecNetwork alloc]init];
+        
+        [medtectNetwork createPatientNewEncounter:bundle :self];
+    }
+  
 }
 
 
+-(void)getALLEquipments{
+    MedTecNetwork *medtecNetwork = [[MedTecNetwork alloc]init];
+    
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+   int practiceId = [appDelegate loginInfo].practiceID;
+    
+    [bundle setValue:[NSNumber numberWithInt:practiceId] forKey:@"PracticeID"];
+    [medtecNetwork getAllEquipments:bundle :self];
+}
+
+
+-(void)getEncounters{
+    MedTecNetwork *medtecNetwork = [[MedTecNetwork alloc]init];
+    
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+
+    
+     [bundle setObject: [NSNumber numberWithInt:info.patientId] forKey:@"PatientID"];
+    [medtecNetwork getPatientAllEncounters:bundle :self];
+}
+
+
+-(void)getAccessories{
+    MedTecNetwork *medtecNetwork = [[MedTecNetwork alloc]init];
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    [bundle setObject: [NSNumber numberWithInt:5] forKey:@"EquipID"];
+    [medtecNetwork getAccessories:bundle :self];
+}
+
+#pragma mark -network delegates
+
+-(void)onSuccess:(id)result:(int)call{
+    
+    NSLog(@"Successfully recieved data for call %d ",call  );
+    [self hideProgress];
+    
+    
+    switch (call) {
+        case CALL_CREATE_NEW_ENCOUNTER:
+//            {"ID":11,"Status":"Success"}
+            
+            if ([result isKindOfClass:[NSDictionary class]]) {
+                NSDictionary *bundle = (NSDictionary*)result;
+                NSString *val = [bundle objectForKey:@"Status"];
+                if ( val != nil && [val isEqualToString:@"Success"]) {
+                    [self showAlert:@"Success"];
+                    return;
+                }
+            }
+            [self showAlert:@"Failed "];
+            
+            break;
+            
+        case CALL_EQUIPMENTS:
+            break;
+            
+        case CALL_ACCESSORIES:
+            appDelegate.accessoryArray = [Accessory collection:result];
+            [accessoryTable reloadData];
+        default:
+            break;
+    }
+}
+
+-(void)onError:(NSString*)errorMsg :(int)call{
+    
+    NSLog(@"Failed with response %@ ",errorMsg);
+    [self hideProgress];
+    switch (call) {
+        case CALL_CREATE_NEW_ENCOUNTER:
+            
+            break;
+            
+        case CALL_EQUIPMENTS:
+            break;
+            
+        default:
+            break;
+    }
+}
+
+-(void)onConnectionTimeOut{
+    
+}
 
 #pragma mark -  Pop View
 
@@ -384,423 +558,241 @@
 
 #pragma mark - Validation
 
--(void)checkValidation
+-(NSString*)checkValidation
 {
-    validationSuccess = YES;
+    NSString *invalidfField = @"";
     //    if ([[registerRequestDict objectForKey:@"FirstName"] length] <1)
     
  
     if([providerTxtField.text length] < 1)
     {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Provider ID" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    
-    else if([diagnosisCodeTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter DiagnosisCode " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    
-    else if([estimatedTreatDurationTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Estimated Treatment Duration" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
+       invalidfField = @"provider info";
 
+    }else if([diagnosisCodeTxtField.text length] < 1){
+        
+        invalidfField = @"provider info";
+        
+    }else if([estimatedTreatDurationTxtField.text length] < 1){
+        
+        invalidfField = @" Estimated duration of treatment info";
+   
+    } else if([typeOfInfusionPumpTxtField.text length] < 1){
+      invalidfField = @"Type of infusion pump";
+        
+    } else if([drugTxtField.text length] < 1){
+        
+         invalidfField = @"drug info";
+        
+    }
+    else if([startDateTxtField.text length] < 1){
+
+        invalidfField = @"todays date";    
     
-    else if([typeOfInfusionPumpTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Type Of Infusion " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    else if([drugTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Drug used in pump" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    else if([startDateTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Start Date " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    else if([pumpSerialTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Pump Serial  " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    else if([hcpcsCodeTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter HCPCSCode" delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-    else if([jCodeTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter jCode " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
-    }
-        else if([diagnosisCodeTxtField.text length] < 1)
-    {
-        validationSuccess = NO;
-        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message:@"Enter Diagnosis Code " delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-        [alert show];
-        [alert release];
+    } else if([pumpSerialTxtField.text length] < 1){
+        
+        invalidfField = @"Pump serial ";  
+
+    }else if([hcpcsCodeTxtField.text length] < 1){
+        
+        invalidfField = @"HCPCS code"; 
+        
+    }else if([jCodeTxtField.text length] < 1){
+        
+        invalidfField = @"J code info"; 
+        
+    }else if([diagnosisCodeTxtField.text length] < 1){
+        invalidfField = @"Diagnosis code";
     }  
     
-   
-                
-      
-}
-
-
-
-#pragma mark Webservices
-
-
--(IBAction)saveEncounter
-{
-   
-//    if(appDelegate.isNetworkIsAvailable==NO)
-//    {
-//        [[UIApplication sharedApplication] endIgnoringInteractionEvents];
-//        UIAlertView *alertNetwork = [[UIAlertView alloc] initWithTitle:@"Network Status" message:@"Sorry, network is not available. Please try again later." delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-//        [alertNetwork show];
-//        [alertNetwork release];
-//        return;
-//        
-//    }
-//    else
-//    {
-        [self checkValidation]; 
-        if (validationSuccess == YES)
-        {
-            [self addDataToDictionary];
-            [self createRequestForNewEncounter];
-        }   
-    //}
-    
-}
-
-
-//TBD
-
-
--(void)testData
-{
-  /*  equipIdTxtField.text =@"5";
-    dateTxtField.text=@"07/26/2012";
-    equipOptionsTxtField.text =@"purchase";
-    prescribePhysicianTxtField.text=@"Hamad";
-    deliveryMethodTxtField.text=@"shipping service";
-    startRefillDateTxtField.text=@"07/19/2012";
-    equipInspectedTxtField.text=@"test";
-    equipDeliveryTxtField.text=@"07/28/2012";
-    facilityNameTxtField.text=@"JIM KILCRAN";
-    facilityAddressTxtField.text=@"114";
-    diagnosisCodeTxtField.text=@"150,colon";
-    estimatedTreatDurationTxtField.text=@"10";
-    serialNumberTxtField.text=@"123456";
-    typeOfEquipTxtField.text=@"infusion pump"; 
-    drugTxtField.text=@"test drug";
-    hcpcsCodeTxtField.text=@"j9190";
-    jCodeTxtField.text=@"j9190 5-FU,500mg";
-    beneficiaryNameTxtField.text=@"george";
-    ptnPhysicianNameTxtField.text=@"hamad";
-    ptnTimesTxtField.text =@"1";
-    ptnDaysTxtField.text =@"7";
-    ptnAdminTxtField.text=@"1";
-    ptnInfusionTxtField.text=@"1";
-    ptnEquipTxtField.text=@"Ambit";    
-    dmeifInitialDateTxtField.text=@"07/21/2012";
-    dmeifRevisedDateTxtField.text=@"07/24/2012"; 
-    dmeifRecertificationDateTxtField.text=@"07/24/2012";  */ 
-    
-}
-
-
-
--(void)addDataToDictionary
-{
-  /*  [createEncounterDict setObject:@"1" forKey:@"StatusID"];  
-    [createEncounterDict setObject:patientId forKey:@"PatientID"];
-    [createEncounterDict setObject:equipIdTxtField.text  forKey:@"EquipID"];
-    [createEncounterDict setObject:dateTxtField.text  forKey:@"Date"];
-    [createEncounterDict setObject:equipOptionsTxtField.text  forKey:@"Equip_Options"];
-    [createEncounterDict setObject:prescribePhysicianTxtField.text forKey:@"Presc_Physician"];
-    [createEncounterDict setObject:deliveryMethodTxtField.text forKey:@"Delivery_Method"];
-    [createEncounterDict setObject:startRefillDateTxtField.text forKey:@"Start_Refill_Date"];
-    [createEncounterDict setObject:equipInspectedTxtField.text forKey:@"Equip_Inspected_By"]; 
-    [createEncounterDict setObject:equipDeliveryTxtField.text  forKey:@"Equip_Deliv_Date"];
-    [createEncounterDict setObject:facilityNameTxtField.text forKey:@"Facility_Name"];    
-    [createEncounterDict setObject:facilityAddressTxtField.text forKey:@"Facility_Address"];    
-    [createEncounterDict setObject:diagnosisCodeTxtField.text forKey:@"Diagnosis_Codes"];  
-     [createEncounterDict setObject:serialNumberTxtField.text  forKey:@"Equip_Serial_Num"];
-    [createEncounterDict setObject:estimatedTreatDurationTxtField.text  forKey:@"Est_Treatment_Dur"];
-    [createEncounterDict setObject:typeOfEquipTxtField.text  forKey:@"Type_Of_Equip"];
-    [createEncounterDict setObject:drugTxtField.text  forKey:@"Drug"];
-    [createEncounterDict setObject:hcpcsCodeTxtField.text  forKey:@"HCPCS_Code"];
-    [createEncounterDict setObject:jCodeTxtField.text forKey:@"J_Code"];    
-    [createEncounterDict setObject:equipRcvdTxtField.text forKey:@"Po_Equip_Received_Date"];    
-    [createEncounterDict setObject:beneficiaryNameTxtField.text forKey:@"Mcr_Beneficiary_Name"];
-    [createEncounterDict setObject:mcrNotesTxtField.text forKey:@"Mcr_Notes"];
-    [createEncounterDict setObject:pdrLegalGuardTxtField.text forKey:@"Pdr_Legalguardian_Sign"];
-    [createEncounterDict setObject:piiGuardRelationTxtField.text forKey:@"Pii_Guardian_Relation"];
-    [createEncounterDict setObject:piiGuardFirstNameTxtField.text forKey:@"Pii_Guardian_Firstname"];
-    [createEncounterDict setObject:piiGuardLastNameTxtField.text forKey:@"Pii_Guardian_Lastname"];
-    [createEncounterDict setObject:piiGuardAdd1TxtField.text forKey:@"Pii_Guardian_Address1"];
-    [createEncounterDict setObject:piiGuardAdd2TxtField.text forKey:@"Pii_Guardian_Address2"];
-    [createEncounterDict setObject:piiGuardCityTxtField.text forKey:@"Pii_Guardian_City"];
-    [createEncounterDict setObject:piiGuardStateTxtField.text forKey:@"Pii_Guardian_State"];
-    [createEncounterDict setObject:piiGuardZipTxtField.text forKey:@"Pii_Guardian_Zip"];
-    [createEncounterDict setObject:piiGuardEmailTxtField.text forKey:@"Pii_Guardian_Email"];
-    [createEncounterDict setObject:piiGuardPhoneTxtField.text forKey:@"Pii_Guardian_Phone"];
-    [createEncounterDict setObject:ptnPhysicianNameTxtField.text forKey:@"Ptn_Physician_Name"];
-    [createEncounterDict setObject:ptnTimesTxtField.text forKey:@"Ptn_Intravenous_Conti_Times"];
-    [createEncounterDict setObject:ptnDaysTxtField.text forKey:@"Ptn_Intravenous_Conti_Days"];
-    [createEncounterDict setObject:ptnAdminTxtField.text forKey:@"Ptn_Continu_Administrat"];
-    [createEncounterDict setObject:ptnAdminIfnoTxtField.text forKey:@"Ptn_Continu_Adminstrat_IFno"];
-    [createEncounterDict setObject:ptnInfusionTxtField.text forKey:@"Ptn_Intravenous_Infusion"];
-    [createEncounterDict setObject:ptnEquipTxtField.text forKey:@"Ptn_Presc_Of_Equip"];
-    [createEncounterDict setObject:dmeifInitialDateTxtField.text forKey:@"Dmeif_Initial_Date"];
-    [createEncounterDict setObject:dmeifRevisedDateTxtField.text forKey:@"Dmeif_Revised_Date"];
-    [createEncounterDict setObject: dmeifRecertificationDateTxtField.text forKey:@" Dmeif_Recertification_Date"];*/
-    
-    
-}
-
-
-
-
--(void) createRequestForNewEncounter
-{
-    //[createEncounterDict setObject:@"1" forKey:@"StatusID"];
+    return invalidfField;
  
-    NSLog(@"\nCreateEncounterDict dict = %@",createEncounterDict);
-    
-    id jsonRequest = [createEncounterDict JSONRepresentation];
-    
-    NSURL *url = [NSURL URLWithString:@"http://www.medtecp3.com/MedtecMobilesServices/CreatePatientNewEncounter"];
-    
-    urlRequest = [NSMutableURLRequest requestWithURL:url
-                                              cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];        
-    
-    NSData *requestData = [NSData dataWithBytes:[jsonRequest UTF8String] length:[jsonRequest length]];
-    
-    [urlRequest setHTTPMethod:@"POST"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [urlRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [urlRequest setValue:[NSString stringWithFormat:@"%d", [requestData length]] forHTTPHeaderField:@"Content-Length"];        
-    [urlRequest setHTTPBody:requestData];
-    // NSLog(@"%@",requestData);
-    
-    if (urlConnection != nil)
-    {
-        [urlConnection release];
-    }
-    
-    urlConnection = [[NSURLConnection alloc]initWithRequest:urlRequest delegate:self];
-    
-    if (webServiceData != nil ) {
-        [webServiceData release];
-    }
-    webServiceData = [[NSMutableData data] retain];	
-    
-    if (timer  != nil)
-    {
-        timer = nil;
-    }
-    timer = [NSTimer scheduledTimerWithTimeInterval:60 target:self selector:@selector(cancelConnection:) userInfo:urlConnection repeats:NO];
-    
-    
-}   
-
--(void)getPracticeEquipments
-{
-    
-    NSMutableDictionary *questionDict = [[NSMutableDictionary alloc]init];
-    //[questionDict setObject:@"1" forKey:@"PracticeID"];
-    
-    [questionDict setObject:[global_userDetails objectForKey:@"PracticeID"] forKey:@"PracticeID"];    
-    
-    id jsonRequest = [questionDict JSONRepresentation];   
-    
-    NSLog(@"\ngetPracticeEquipments request is %@",questionDict);
-    
-    //    NSURL *url = [NSURL URLWithString:@"http://192.168.1.100/TestingApps/MedtecMobilesServices/DeletePatientInfo"];    
-    
-    NSURL *url = [NSURL URLWithString:@"http://www.medtecp3.com/MedtecMobilesServices/GetPracticeEquipments"];
-    
-    equipRequest = [NSMutableURLRequest requestWithURL:url
-                                                         cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
-    
-    
-    NSData *searchPatientdeleteData = [NSData dataWithBytes:[jsonRequest UTF8String] length:[jsonRequest length]];
-    
-    [equipRequest setHTTPMethod:@"POST"];
-    [equipRequest setValue:@"application/json" forHTTPHeaderField:@"Accept"];
-    [equipRequest setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
-    [equipRequest setValue:[NSString stringWithFormat:@"%d", [searchPatientdeleteData length]] forHTTPHeaderField:@"Content-Length"];        
-    [equipRequest setHTTPBody: searchPatientdeleteData];    
-    dataConnection =[[NSURLConnection alloc] initWithRequest:equipRequest delegate:self];    
-    equipWebServiceData = [[NSMutableData data] retain];
-
 }
 
--(void)connection:(NSURLConnection *)aConnection didReceiveData:(NSData *)data
-{
+-(NSMutableDictionary*)createRequestForNewEncounter1{
     
-    if (aConnection==dataConnection) 
-    {
-        [equipWebServiceData appendData:data]; 
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    if (info != nil) {
+        [bundle setValue:[NSNumber numberWithInt:info.patientId] forKey:@"PatientID"];
     }
-    else
-    {
-    encounterDataReceived = YES;   
-    [webServiceData appendData:data]; 
+    
+     [bundle setValue:[NSNumber numberWithInt:1] forKey:@"EquipID"];
+    
+       
+    NSString *val = startDateTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Date"];
     }
+        
+    val = rentButton.tag == 1 ? @"Rental":@"Buy";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Equip_Options"];
+    }
+    
+//    Presc_Physician 
+    val = providerTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Presc_Physician"];
+    }
+    
+    if (nursingButton.tag == 1) {
+        val = DELIVERY_NURING;
+    }else if(beneficiaryButton.tag == 1){
+        val = DELIVERY_DTOB;
+    }else if(shippingButton.tag == 1){
+        val = DELIVERY_SHIPPING;
+    }else{
+        val = @"";
+    }
+    
+    [bundle setValue:val forKey:@"Delivery_Method"];
+
+  
+    [bundle setValue:@"01/01/2012" forKey:@"Start_Refill_Date"];
+    [bundle setValue:@"-" forKey:@"Equip_Inspected_By"];
+    [bundle setValue:@"01/01/2012" forKey:@"Equip_Deliv_Date"];
+    [bundle setValue:@"-" forKey:@"Facility_Name"];
+    [bundle setValue:@"-" forKey:@"Facility_Address"];
+   
+    val = diagnosisCodeTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Diagnosis_Codes"];
+    }
+ 
+    val = estimatedTreatDurationTxtField.text;
+    if (![val isEqualToString:@""]) {
+        int _val = 0;
+        @try {
+            _val = [val intValue];
+        }
+        @catch (NSException *exception) {
+            _val = 0;
+        }
+        @finally {
+            
+        }
+        [bundle setValue:[NSNumber numberWithInt:_val] forKey:@"Est_Treatment_Dur"];
+    }
+    
+    val = pumpSerialTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Equip_Serial_Num"];
+    }
+    
+    
+    
+    
+    val = typeOfInfusionPumpTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Type_Of_Equip"];
+    }
+    
+    val = drugTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Drug"];
+    }
+    
+    val = hcpcsCodeTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"HCPCS_Code"];
+    }
+    
+    val = jCodeTxtField.text;
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"J_Code"];
+    }
+    
+   
+    val = @" - ";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Mcr_Beneficiary_Name"];
+    }
+ 
+    val = @"-";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Ptn_Physician_Name"];
+    }
+  
+    val = @"-";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Ptn_Presc_Of_Equip"];
+    }
+    
+    val = @"04/01/2012";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Dmeif_Initial_Date"];
+    }
+    
+    val = @"04/01/2012";
+    if (![val isEqualToString:@""]) {
+        [bundle setValue:val forKey:@"Dmeif_Revised_Date"];
+    }
+
+    [bundle setValue:[NSNumber numberWithInt:7] forKey:@"Ptn_Intravenous_Conti_Days"];
+    
+    [bundle setValue:[NSNumber numberWithInt:1] forKey:@"Ptn_Intravenous_Conti_Times"];
+    
+    int _val = 0;
+    if (intravenousInfusionYesButton.tag == 1) {
+        _val = 1;
+    }
+   
+    [bundle setValue:[NSNumber numberWithInt:_val] forKey:@"Ptn_Intravenous_Infusion"];
+    
+    _val = 0;
+    if (contiAdminYesButton.tag == 1) {
+        _val = 1;
+    }
+    
+    [bundle setValue:[NSNumber numberWithInt:_val] forKey:@"Ptn_Continu_Administrat"];
+    
+    val = prescriptionPumpAmbitButton.tag == 1 ? @"ambit":@"-";    
+    
+    [bundle setValue:val forKey:@"Ptn_Presc_Of_Equip"];
+    
+    return bundle;
+    
+ }
+
+
+-(void)showAlert:(NSString*)message{
+   message = [NSString stringWithFormat:@"Please enter %@",message];
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil message: message delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
+    [alert show];
+    [alert release];
 }
 
 
--(void)connection:(NSURLConnection *)aConnection didReceiveResponse:(NSURLResponse *)response
-{
-    if (aConnection==dataConnection) 
-    {
-      [equipWebServiceData setLength:0]; 
-    }
-    else
-    {
-       [webServiceData setLength:0];  
-    }
-}
 
 
-- (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error 
-{
-    if (connection==dataConnection) 
-    {
+
+#pragma mark - show/hide progress alert 
+
+-(void)showProgress :(NSString*)message
+{      
+    
+    if (progressAlert == nil) {
+        progressAlert = [[UIAlertView alloc] initWithTitle: @"" message: message delegate: nil cancelButtonTitle: nil otherButtonTitles: nil];
+        UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
+        activityView.frame = CGRectMake(219.0f, 20.0f, 37.0f, 37.0f);
+        [progressAlert addSubview:activityView];
+        [activityView startAnimating];
+        [activityView release];
         
     }
-    else
-    {
-        if (urlConnection!=nil) 
-        {
-            [urlConnection release];
-        }        
-        if (webServiceData!=nil) 
-        {
-            [webServiceData release];
-        }
-    }
-	NSLog(@"Error is %@",error);	
+    
+    progressAlert.message = message;
+    [progressAlert show];
 }
 
--(void)connectionDidFinishLoading:(NSURLConnection *)aConnection
+-(void)hideProgress
 {    
-    if (aConnection==dataConnection)
-    {
-        NSString *strResponse = [[NSString alloc]initWithData:equipWebServiceData encoding:NSUTF8StringEncoding];
-        
-        NSLog(@"\nstrResponse =%@",strResponse);
-        if (strResponse !=nil && [strResponse length] >0) 
-        {
-            SBJSON *json = [[SBJSON new] autorelease];    
-            id result = [json objectWithString:strResponse error:nil];
-            [equipResponseDict removeAllObjects];
-            [equipPickerArray removeAllObjects];
-//            if ([result isKindOfClass:[NSDictionary class]]) 
-//                [equipResponseDict addEntriesFromDictionary:(NSDictionary *)result];
-           
-             if ([result isKindOfClass:[NSArray class]] && [result count] >0) 
-                //[equipResponseDict addEntriesFromDictionary:[result objectAtIndex:0]];
-                //equipPickerArray=result;
-                 [equipPickerArray addObjectsFromArray:result];
-            NSLog(@"EquipArray is %@",equipPickerArray);
-            
-            if ([equipPickerArray count] >0)
-            {                
-                for (int i=0; i<[equipPickerArray count]; i++) 
-                {
-                    NSLog(@".....Equippicker array count is %d and array is %@",[equipPickerArray count],equipPickerArray);
-                    NSMutableDictionary *tempDict=[[NSMutableDictionary alloc] initWithCapacity:0];
-                    tempDict=[equipPickerArray objectAtIndex:i];
-                    NSLog(@"TempDict is %@",tempDict);
-                    [equipPickerArray addObject:[tempDict objectForKey:@"Equip_Name"]];
-                }                
-                [equipPicker reloadAllComponents];
-            }
-            
-            NSLog(@"Arr count is %d",[equipPickerArray count]);
-            
-        }
-        
-    }
-    else
-    {
-        NSString *strResponse = [[NSString alloc]initWithData:webServiceData encoding:NSUTF8StringEncoding];
-        
-        NSLog(@"\nstrResponse =%@",strResponse);
-        
-        if (strResponse !=nil && [strResponse length] >0) 
-        {
-            SBJSON *json = [[SBJSON new] autorelease];    
-            id result = [json objectWithString:strResponse error:nil];
-                    
-            NSString *responseString = [result objectForKey:@"Status"];
-            NSLog(@"\nResult  from server is %@",responseString);
-            if ([responseString isEqualToString:@"Success"])
-            {
-                UIAlertView *resultAlert = [[UIAlertView alloc] initWithTitle:@"Created New Patient Encounter Successfully" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];                
-                [resultAlert show];
-                [resultAlert release];
-                //[self.navigationController popViewControllerAnimated:YES];
-            }
-            else
-            {
-                UIAlertView *resultAlert = [[UIAlertView alloc] initWithTitle:@"Encounter Creation Failed" message:nil delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil, nil];
-                [resultAlert show];
-                [resultAlert release];
-            }
-        }    
-    }
-      
-}
-
-
--(void)cancelConnection:(NSTimer *)myTimer
-{
-    NSURLConnection *tempConnection = [myTimer userInfo];
-    if([tempConnection isEqual:urlConnection])
-    {
-        if (encounterDataReceived == NO)
-        {
-            [urlConnection cancel];
-            [[UIApplication sharedApplication] endIgnoringInteractionEvents];
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:nil message:@"Network problem " delegate:self cancelButtonTitle:nil otherButtonTitles:@"OK", nil];
-            [alert show];
-            [alert release];
-        }
-        timer = nil;
+    if (progressAlert != nil)
+	{
+        [progressAlert dismissWithClickedButtonIndex:0 animated:YES];
     }
     
 }
+
 
 #pragma mark - fill patient details
 -(void)fillPatientInfo:(PatientInfo*)_info{
@@ -825,7 +817,7 @@
 {
     if (tableView== encounterListTable) 
                 return 3;
-    return 4;
+    return appDelegate.accessoryArray != nil ? appDelegate.accessoryArray.count : 0 ;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -913,49 +905,20 @@
             }						
             
         } 
-        switch (indexPath.row) 
-        {
-            case 0:
-            {
-                //[cell.accessoryButton setImage:[UIImage imageNamed:@"CheckBoxHL.png"] forState:UIControlStateNormal];
-                cell.accessoryName.text=@"Cassette";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Summit Medical";
-                cell.part.text=@"220139";                
-            }
-                break;
-            case 1:
-            {
-                cell.accessoryName.text=@"Batteries";
-                cell.quantity.text=@"02";
-                cell.manufacturer.text=@"Panasonic";
-                cell.part.text=@"AA";                
-            }
-                break;
-            case 2:
-            {
-                cell.accessoryName.text=@"Drug Baq";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Metric Co";
-                cell.part.text=@"58719";                
-            }
-                break;
-            case 3:
-            {
-                cell.accessoryName.text=@"Carry Pouch";
-                cell.quantity.text=@"01";
-                cell.manufacturer.text=@"Summit Medical";
-                cell.part.text=@"220409";
-            }
-                break;
-            default:
-                break;
-        }     
+        
+        
+        Accessory *accessory = [appDelegate.accessoryArray objectAtIndex:indexPath.row];
+        
+        cell.accessoryName.text = accessory.accessoryName;
+        cell.manufacturer.text = accessory.manufacturer;
+        cell.part.text = accessory.part;
+        cell.quantity.text =[ NSString stringWithFormat:@"%d",accessory.quantity];
+
         
          return cell;
     }
     
-   
+    return nil;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -965,9 +928,6 @@
         cell.tag = !cell.tag;
         [cell.accessoryButton setImage: [UIImage imageNamed:cell.tag ==1 ? @"CheckBoxHL.png" :@"checkBox.png"] forState:UIControlStateNormal];
     }
-   
-    
-    
 }
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
@@ -1003,6 +963,7 @@
             Provider *provider =  [appDelegate.providersArray objectAtIndex:row];
             title = provider.fullName;
             providerTxtField.text=title;
+            providerTxtField.tag = row;
         }
             break;
         case PICKER_JCODE:
@@ -1149,12 +1110,17 @@
 -(void)onCASelection:(UIButton*)btn{
     
     if (btn == contiAdminNoButton ) {
-        contiAdminYesButton.tag = 0;
-       UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        contiAdminYesButton.tag = (btn.tag == 0) ? 1 : 0;
+        int tag = contiAdminYesButton.tag;
+        UIImage *image = [UIImage imageNamed:tag == 1 ? @"CheckBoxHL.png":@"checkBox.png"];
+      
         [contiAdminYesButton setImage:image forState:UIControlStateNormal];
     }else if(btn == contiAdminYesButton){
-        contiAdminNoButton.tag = 0;
-        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        
+        contiAdminNoButton.tag = (btn.tag == 0) ? 1 : 0;
+        int tag = contiAdminNoButton.tag;
+        UIImage *image = [UIImage imageNamed:tag == 1 ? @"CheckBoxHL.png":@"checkBox.png"];
+        
         [contiAdminNoButton setImage:image forState:UIControlStateNormal];
 
     }
@@ -1163,12 +1129,16 @@
 -(void)oniiSelection:(UIButton*)btn{
     
     if (btn == intravenousInfusionNoButton ) {
-        intravenousInfusionYesButton.tag = 0;
-        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        intravenousInfusionYesButton.tag = (btn.tag == 0) ? 1 : 0;
+        int tag = intravenousInfusionYesButton.tag;
+        UIImage *image = [UIImage imageNamed:tag == 1 ? @"CheckBoxHL.png":@"checkBox.png"];
+       
         [intravenousInfusionYesButton setImage:image forState:UIControlStateNormal];
     }else if(btn == intravenousInfusionYesButton){
-        intravenousInfusionNoButton.tag = 0;
-        UIImage *image = [UIImage imageNamed:@"checkBox.png"];
+        intravenousInfusionNoButton.tag = (btn.tag == 0) ? 1 : 0;
+        
+        int tag = intravenousInfusionNoButton.tag;
+        UIImage *image = [UIImage imageNamed:tag == 1 ? @"CheckBoxHL.png":@"checkBox.png"];
         [intravenousInfusionNoButton setImage:image forState:UIControlStateNormal];
         
     }

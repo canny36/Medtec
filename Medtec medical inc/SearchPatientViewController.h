@@ -10,6 +10,7 @@
 #import "TdCalendarView.h"
 #import "MedTecNetwork.h"
 #import "PatientInfo.h"
+#import "PopoverController.h"
 
 
 @class AppHeaderView;
@@ -18,10 +19,10 @@
 @class Medtec_medical_incAppDelegate;
 @class MainViewController;
 
-extern NSMutableDictionary *global_userDetails;
+
 
 @interface SearchPatientViewController : UIViewController <UITableViewDataSource,
-UITableViewDelegate,UITextFieldDelegate,CalendarViewDelegate,NetworkDelegate>
+UITableViewDelegate,UITextFieldDelegate,CalendarViewDelegate,NetworkDelegate,UIPopoverControllerDelegate,PopupDelegate>
 
 { 
     Medtec_medical_incAppDelegate *appDelegate;
@@ -32,6 +33,8 @@ UITableViewDelegate,UITextFieldDelegate,CalendarViewDelegate,NetworkDelegate>
     IBOutlet UIImageView *searchTableBgImage;
     
     UITableView   *searchPatientTableView;
+    
+    UIPopoverController *popOverController;
   
     ///////////// TextFields
     
@@ -101,5 +104,6 @@ UITableViewDelegate,UITextFieldDelegate,CalendarViewDelegate,NetworkDelegate>
 -(void)showIndicator;
 -(void)dismissIndicator;
 -(IBAction)searchPatients;
+-(IBAction)clearFileds:(id)sender;
 
 @end

@@ -39,8 +39,9 @@ static GetProviderIDs *sharedDataSource = nil;
     NSURL *url = [NSURL URLWithString:URL_GETPROVIDERS];
     NSMutableURLRequest *loginUrlRequest = [NSMutableURLRequest requestWithURL:url
                                               cachePolicy:NSURLRequestUseProtocolCachePolicy timeoutInterval:60.0];
+  Medtec_medical_incAppDelegate *appdelegate=  ( Medtec_medical_incAppDelegate*)[[UIApplication sharedApplication] delegate];
     NSMutableDictionary *dic = [[NSMutableDictionary alloc]init];
-    [dic setObject:[global_userDetails objectForKey:@"PracticeID"] forKey:@"PracticeID"];
+    [dic setObject:[NSNumber numberWithInt:appdelegate.loginInfo.practiceID ] forKey:@"PracticeID"];
     id jsonRequest = [dic JSONRepresentation];
     
     NSData *requestData = [NSData dataWithBytes:[jsonRequest UTF8String] length:[jsonRequest length]];

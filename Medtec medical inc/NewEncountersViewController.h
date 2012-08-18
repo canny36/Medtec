@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "TdCalendarView.h"
 #import "PatientInfo.h"
+#import "MedTecNetwork.h"
 
 @class AppHeaderView;
 @class TdCalendarView;
@@ -21,9 +22,8 @@
 #define PICKER_DRUG 4
 
 
-extern NSMutableDictionary *global_userDetails;
 
-@interface NewEncountersViewController : UIViewController<UITextFieldDelegate,CalendarViewDelegate,UIAlertViewDelegate,UITableViewDataSource,UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
+@interface NewEncountersViewController : UIViewController<UITextFieldDelegate,CalendarViewDelegate,UIAlertViewDelegate,UITableViewDataSource,UITableViewDelegate,UIPickerViewDelegate,UIPickerViewDataSource ,NetworkDelegate>
 {
     AppHeaderView *appHeaderView;
      TdCalendarView  *tdView;
@@ -94,9 +94,9 @@ extern NSMutableDictionary *global_userDetails;
     NSMutableArray *equipPickerArray;
     NSMutableArray *pickerArray;
     int pickerIndex;
-    
+     
     PatientInfo *info;
-    
+    UIAlertView *progressAlert;
     ///Required text fields
     
     IBOutlet UILabel *patientName;
@@ -150,6 +150,7 @@ extern NSMutableDictionary *global_userDetails;
     NSMutableArray *jCodeArray;     
     
     IBOutlet UIPickerView *picker;
+    IBOutlet UIImageView *encounterHeadedView;
 
 }
 
@@ -181,8 +182,8 @@ extern NSMutableDictionary *global_userDetails;
 
 
 -(void)popView:(int)value;
--(void)checkValidation;
--(void) createRequestForNewEncounter;
+
+
 -(void)saveEncounter;
 -(void)addDataToDictionary;
 -(void)testData;

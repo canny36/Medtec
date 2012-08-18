@@ -21,8 +21,8 @@
     IBOutlet UILabel *lastVisitDate;
        
     SearchPatientViewController *searchViewController;
-    
     PatientInfo *patientInfo;
+    
 }
 
 @property(nonatomic,retain)PatientInfo *patientInfo;

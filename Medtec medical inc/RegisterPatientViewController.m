@@ -18,8 +18,11 @@
 #import "Provider.h"
 #import "MedTecNetwork.h"
 #import "Util.h"
+#import "InsuranceView.h"
 
 #define REGISTER_URL @"http://www.medtecp3.com/MedtecMobilesServices/CreateNewPatient"
+#define INSURANCE_VIEW_HEIGHT 145
+#define INSURANCE_VIEW_HEIGHT_SELF 50
 
 @interface RegisterPatientViewController()
 
@@ -35,6 +38,7 @@
 -(void)showProgress:(NSString*)message;
 -(void)hideProgress;
 
+
 @end
 
 @implementation RegisterPatientViewController
@@ -44,12 +48,14 @@
 @synthesize registerRequestDict;
 @synthesize patientInfo;
 
+static float insuranceBgHeight;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) 
     {
-        // Custom initialization
+       
     }
     return self;
 }
@@ -99,6 +105,134 @@
 
 }
 
+
+-(IBAction)addInsurance:(id)sender{
+    NSLog(@"ADDIng insurance field");
+    if (insuranceHolder!= nil) {
+
+        NSArray *subViews = [[insuranceHolder subviews] retain];
+        int count =[subViews count];
+        
+                
+        if ( count  > 0) 
+        {
+            
+           InsuranceView *_lastView =  [[subViews objectAtIndex:count-1] retain];
+            
+            CGRect _frame = CGRectMake(0 , _lastView.frame.origin.y + 143 + 10 , insuranceHolder.frame.size.width, 143);
+            
+            [subViews release];
+            [_lastView release];
+            
+            InsuranceView *insuranceView = [[InsuranceView alloc]initWithFrame:_frame withRemove:YES isDependent:YES];
+           
+            insuranceView.delegate = self;
+            
+            [insuranceHolder addSubview:insuranceView];
+            [insuranceView release];
+         }
+        else
+        {
+            CGRect _frame = CGRectMake(0, 10, insuranceHolder.frame.size.width, 143);
+            
+            InsuranceView *insuranceView = [[InsuranceView alloc]initWithFrame:_frame withRemove:NO isDependent:YES];
+             insuranceView.delegate = self;
+
+            [insuranceHolder addSubview:insuranceView];
+            [insuranceView release];
+            insuranceView  = nil;
+         
+        }
+        
+        int kheight  = 10;
+        
+        
+       subViews = [insuranceHolder subviews];
+        count = subViews.count;
+        for (int i=0;i<count;i++){
+            UIView *view = [subViews objectAtIndex:i];
+            if ([view isKindOfClass:[InsuranceView class]]) {
+                InsuranceView *v = (InsuranceView*)view; 
+                CGFloat height = v.frame.size.height;
+                kheight += height + 10;
+            }
+        }
+        
+        if (count == 3) {
+            ((UIButton*)sender).hidden = YES;
+        }
+        CGRect _frame = insuranceHolder.frame;
+         
+        _frame.size.height = kheight;
+        insuranceHolder.frame = _frame;
+        
+         
+        _frame =  insuranceBg.frame; 
+        _frame.size.height = insuranceBgHeight + kheight;
+
+        insuranceBg.frame = _frame;
+        CGFloat scrollSize = _frame.origin.y+_frame.size.height;
+        
+        NSLog(@"SCROLL SIZE %f ",scrollSize);
+        if (scrollSize < 1000) {
+             [bgScrollView setContentSize:CGSizeMake(1000, 1000)];
+        }else{
+             [bgScrollView setContentSize:CGSizeMake(1000, scrollSize+100)];
+        }
+
+    }  
+}
+
+
+-(void)onRemoveInsurance:(id)view{
+    
+    NSLog(@"REmove insurance");
+    
+    [view removeFromSuperview];
+    
+    int y = 10;
+     int kheight = 10;
+    for (UIView *view in [insuranceHolder subviews]){
+        if ([view isKindOfClass:[InsuranceView class]]) {
+            InsuranceView *v = (InsuranceView*)view; 
+            CGRect frame= v.frame;
+            CGFloat height = frame.size.height;
+            frame.origin.y = y;
+            v.frame = frame;
+            y += 163;
+            
+            kheight += height + 10;
+        }
+    }
+    
+    
+  int count = [insuranceHolder subviews].count;
+    if (count < 3) {
+        addInsuranceBtn.hidden = YES;
+    }
+    
+    CGRect _frame = insuranceHolder.frame;
+    
+    _frame.size.height = kheight;
+    insuranceHolder.frame = _frame;
+    
+    
+    _frame =  insuranceBg.frame; 
+    _frame.size.height = insuranceBgHeight + kheight;
+    
+    insuranceBg.frame = _frame;
+    CGFloat scrollSize = _frame.origin.y+_frame.size.height;
+    
+    NSLog(@"SCROLL SIZE %f ",scrollSize);
+    if (scrollSize < 1000) {
+        [bgScrollView setContentSize:CGSizeMake(1000, 1000)];
+    }else{
+        [bgScrollView setContentSize:CGSizeMake(1000, scrollSize+100)];
+    }
+
+    
+}
+
 #pragma mark - Update view from patientInfo response 
 
 -(void)updatePatientInfo:(NSMutableDictionary*)bundle
@@ -122,7 +256,48 @@
     patientAccNoTxtField.text= [self getValue:@"PatientAcctNum":bundle];
     hicnTxtField.text= [self getValue:@"HICN":bundle];
     practiseIdTxtField.text= [self getProviderName:[[self getValue:@"PracticeID":bundle] intValue]];
-    insurance1IDTxtField.text = [self getValue:@"Insurance1ID":bundle];
+    
+    
+//    "Insurance1ID": "7",
+//    "Sub1ID": 5,
+//    "Sub1FirstName": "jk",
+//    "Sub1LastName": "df",
+//    "Insurance2ID": "5",
+//    "Sub2ID": 4,
+//    "Sub2FirstName": "h",
+//    "Sub2LastName": "gc",
+    
+   NSString *value =  [self getValue:@"Insurance1ID":bundle];
+    
+  NSArray *array =  [insuranceHolder subviews];
+    if (array.count > 0) {
+        InsuranceView *view = [array objectAtIndex:0];
+        view.insuranceIdField.text = value;
+        value =  [self getValue:@" Sub1FirstName":bundle];
+        view.subscriberNameField.text = value;
+    }
+   
+    value =  [self getValue:@"Insurance2ID":bundle];
+    if (value != nil && [value length] > 0) {
+        [self addInsurance:nil];
+        array =  [insuranceHolder subviews];
+        InsuranceView *view = [array objectAtIndex:1];
+        view.insuranceIdField.text = value;
+        value =  [self getValue:@" Sub2FirstName":bundle];
+        view.subscriberNameField.text = value;
+    }
+    
+    
+    value =  [self getValue:@"Insurance3ID":bundle];
+    if (value != nil && [value length] > 0) {
+        [self addInsurance:nil];
+        array =  [insuranceHolder subviews];
+        InsuranceView *view = [array objectAtIndex:2];
+        view.insuranceIdField.text = value;
+        value =  [self getValue:@" Sub2FirstName":bundle];
+        view.subscriberNameField.text = value;
+    }
+
 
 }
 
@@ -884,18 +1059,18 @@
 {
     [super viewDidLoad];
     
+    
+    insuranceBgHeight = insuranceBg.frame.size.height;
     selectedProvider = 0;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
     
-    practiceID=[[NSString alloc] init];
-    providerID=[[NSString alloc] init];
+   
     
     if (fromEditCall == YES && patientInfo != nil)
     {
-        
-        
+       
         
         NSLog(@" EDIT PATIENT ");
         
@@ -919,80 +1094,21 @@
         NSString *tmpStr = [fromEditDict objectForKey:@"Age"];
        // NSLog(@"%@",tmpStr); 
         [tmpStr retain];
-       // NSLog(@"%@",[fromEditDict objectForKey:@"Sub1ID"]);
-        
-//    ageTxtField.text=[[fromEditDict objectForKey:@"Age"] stringValue];
-//    genderTxtField.text=[fromEditDict objectForKey:@"Sex"];
-//    address1TxtField.text=[fromEditDict objectForKey:@"Address1"];
-//    address2TxtField.text=[fromEditDict objectForKey:@"Address2"];
-//    cityTxtField.text=[fromEditDict objectForKey:@"City"];
-//    stateTxtField.text=[fromEditDict objectForKey:@"State"];
-//    zipTxtField.text=[fromEditDict objectForKey:@"Zip"];
-    dobTxtField.text= patientInfo.dob;
-    /*insurance1IDTxtField.text=[fromEditDict objectForKey:@"Insurance1ID"];
-    sub1IDTxtField.text=[[fromEditDict objectForKey:@"Sub1ID"] stringValue];
-    sub1FirstNameTxtField.text=[fromEditDict objectForKey:@"Sub1FirstName"];
-    sub1LastNameTxtField.text=[fromEditDict objectForKey:@"Sub1LastName"];
-    insurance2IDTxtField.text=[fromEditDict objectForKey:@"Insurance2ID"] ;
-    sub2IDTxtField.text=[[fromEditDict objectForKey:@"Sub2ID"] stringValue];
-    sub2FirstNameTxtField.text=[fromEditDict objectForKey:@"Sub2FirstName"];
-    sub2LastNameTxtField.text=[fromEditDict objectForKey:@"Sub2LastName"];
-    insurance3IDTxtField.text=[fromEditDict objectForKey:@"Insurance3ID"] ;
-    sub3IDTxtField.text=[[fromEditDict objectForKey:@"Sub3ID"] stringValue];
-    sub3FirstNameTxtField.text=[fromEditDict objectForKey:@"Sub3FirstName"];
-    sub3LastNameTxtField.text=[fromEditDict objectForKey:@"Sub3LastName"];
-    hicnTxtField.text=[fromEditDict objectForKey:@"HICN"];
-    heightTxtField.text=[[fromEditDict objectForKey:@"Height"] stringValue];
-    weightTxtField.text=[[fromEditDict objectForKey:@"Weight"] stringValue];
-    pTypeTxtField.text=[fromEditDict objectForKey:@"Ptype"];
-    guarantor1IDTxtField.text=[[fromEditDict objectForKey:@"Guarantor1ID"] stringValue];
-    guarantor2IDTxtField.text=[[fromEditDict objectForKey:@"Guarantor2ID"] stringValue];
-    guarantor3IDTxtField.text=[[fromEditDict objectForKey:@"Guarantor3ID"] stringValue];*/
-   // statusIDTxtField.text=[[fromEditDict objectForKey:@"StatusID"] stringValue];
 
-    }
+        dobTxtField.text= patientInfo.dob;
    
+    }
     
-    
-    registerRequestDict = [[NSMutableDictionary alloc] init];
     genderArray = [[NSArray alloc]initWithObjects:@"Male",@"Female",@"other", nil];
     
     [self performSelectorInBackground:@selector(getProviderIDS) withObject:nil];
     
-    // Do any additional setup after loading the view from its nib.
-   // NSLog(@"%s",__FUNCTION__);
+   
     appDelegate = (Medtec_medical_incAppDelegate *)[[UIApplication sharedApplication] delegate];
     
-    //self.navigationItem.hidesBackButton = YES;
-   /* appHeaderView = [[AppHeaderView alloc] initWithFrame:CGRectMake(0, 0, 1024, 50)];
-    [appHeaderView.signOutButton addTarget:self action:@selector(signOutButtonClicked) forControlEvents:UIControlEventTouchUpInside];
-
-    demoGraphicsView = [[DemographicsView alloc] initWithFrame:CGRectMake(0, 50, 1024, 50)];
-    
-   /* appFooterView = [[AppFooterView alloc] initWithFrame:CGRectMake(0, 655, 1024, 50)];
-    [appFooterView.signatureButton addTarget:self action:@selector(signatureButonClicked) forControlEvents:UIControlEventTouchUpInside]; 
-    
-    
-    [self.view addSubview:demoGraphicsView];
-    [self.view addSubview:appHeaderView];
-    [self.view addSubview:appFooterView];*/
-    
+      
     [bgScrollView setContentSize:CGSizeMake(1000, 1000)];
-    
-//    doneButton = [[UIButton alloc] initWithFrame:CGRectMake(15, 60, 100, 35)];
-//    [doneButton setTitle:@"Done" forState:UIControlStateNormal];
-//    doneButton.backgroundColor = [UIColor blackColor];
-//    [doneButton addTarget:self action:@selector(doneButtonAction) forControlEvents:UIControlEventTouchUpInside];
-//    [self.view addSubview:doneButton];
-    
-//    UIBarButtonItem *rightB = [[UIBarButtonItem alloc]initWithTitle:@"Save" style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonAction)];
-//    self.navigationItem.rightBarButtonItem = rightB;
-//    [rightB release];
-    
-//    UIBarButtonItem *rightBarButton=[[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"save.png"]style:UIBarButtonItemStylePlain target:self action:@selector(doneButtonAction)];
-//    self.navigationItem.rightBarButtonItem=rightBarButton;
-//    [rightBarButton release];
-    
+  
     UIBarButtonItem *rightB = [[UIBarButtonItem alloc]initWithTitle:@"Logout" style:UIBarButtonItemStylePlain target:self action:@selector(logOutAction)];
     self.navigationItem.rightBarButtonItem = rightB;
     [rightB release];    
@@ -1000,91 +1116,25 @@
     activityIndicator =[[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhiteLarge];
     activityIndicator.center = CGPointMake(160, 240);
     activityIndicator.hidden = YES;
+  
     [self.view addSubview:activityIndicator];
-    
-  /*  ////////// array alloc 
-    
- keysArray = [[NSMutableArray alloc] initWithObjects:@"ProviderID",@"FirstName",@"MiddleName",@"LastName",@"PracticeID",@"PatientAcctNum",@"Date_Of_Birth",@"PhoneNumber1" ,@"PhoneNumber2",@"Sex",@"Emergency_Contact_Num",@"Age",@"Email",@"Address1",@"Address2",@"City",@"State",@"Zip",@"Sub1ID",@"Insurance1ID",@"Sub1FirstName",@"Sub1LastName",@"Sub2ID",@"Insurance2ID",@"Sub2FirstName",@"Sub2LastName",@"Insurance3ID",@"Sub3ID",@"Sub3FirstName",@"Sub3LastName",@"HICN",@"Height",@"Weight",@"Ptype",@"Guarantor1ID",@"Guarantor2ID",@"Guarantor3ID",@"StatusID",nil];//@"Driver_Licence_Img",
-    
-    //NSLog(@"%@",keysArray);
-
-   tmpArray = [[NSMutableArray alloc] initWithObjects:@"1",@"ghgdgd",@"Viswanath",@"mallichetty",@"1",@"123",@"10/28/1977",@"9000687123",@"9000687124",@"M",@"9000687125",@"22",@"sai@gmail.com",@"alakapuri",@"road4444no19",@"hyd",@"ap",@"50004482",@"1dsafsf",@"11",@"satish",@"kumar",@"2",@"22",@"prateek",@"raj",@"33",@"3",@"chaitanya",@"kumar",@"12345",@"5",@"70",@"normal",@"111",@"222",@"333",@"1", nil];*/
-    
- 
-     [registerRequestDict setObject:@"" forKey:@"ProviderID"];
-     [registerRequestDict setObject:@"" forKey:@"FirstName"];
-      [registerRequestDict setObject:@"" forKey:@"MiddleName"];
-      [registerRequestDict setObject:@"" forKey:@"LastName"];
-      [registerRequestDict setObject:@"" forKey:@"PracticeID"];
-      [registerRequestDict setObject:@"" forKey:@"PatientAcctNum"];
-      [registerRequestDict setObject:@"" forKey:@"Date_Of_Birth"];
-      [registerRequestDict setObject:@"" forKey:@"PhoneNumber1"];
-      [registerRequestDict setObject:@"" forKey:@"PhoneNumber2"];
-      [registerRequestDict setObject:@"" forKey:@"Sex"];
-      [registerRequestDict setObject:@"" forKey:@"Emergency_Contact_Num"];
-      [registerRequestDict setObject:@"" forKey:@"Age"];
-      [registerRequestDict setObject:@"" forKey:@"Email"];
-      [registerRequestDict setObject:@"" forKey:@"Address1"];
-      [registerRequestDict setObject:@"" forKey:@"Address2"];
-      [registerRequestDict setObject:@"" forKey:@"City"];
-      [registerRequestDict setObject:@"" forKey:@"State"];
-      [registerRequestDict setObject:@"" forKey:@"Zip"];
-      [registerRequestDict setObject:@"" forKey:@"Sub1ID"];
-      [registerRequestDict setObject:@"" forKey:@"Insurance1ID"];
-      [registerRequestDict setObject:@"" forKey:@"Sub1FirstName"];
-      [registerRequestDict setObject:@"" forKey:@"Sub1LastName"];
-      [registerRequestDict setObject:@"" forKey:@"Sub2ID"];
-      [registerRequestDict setObject:@"" forKey:@"Insurance2ID"];
-      [registerRequestDict setObject:@"" forKey:@"Sub2FirstName"];
-      [registerRequestDict setObject:@"" forKey:@"Sub2LastName"];
-      [registerRequestDict setObject:@"" forKey:@"Insurance3ID"];
-      [registerRequestDict setObject:@"" forKey:@"Sub3ID"];
-      [registerRequestDict setObject:@"" forKey:@"Sub3FirstName"];
-      [registerRequestDict setObject:@"" forKey:@"Sub3LastName"];
-      [registerRequestDict setObject:@"" forKey:@"HICN"];
-      [registerRequestDict setObject:@"" forKey:@"Height"];
-      [registerRequestDict setObject:@"" forKey:@"Weight"];
-      [registerRequestDict setObject:@"" forKey:@"Ptype"];
-      [registerRequestDict setObject:@"" forKey:@"Guarantor1ID"];
-      [registerRequestDict setObject:@"" forKey:@"Guarantor2ID"];
-      [registerRequestDict setObject:@"" forKey:@"Guarantor3ID"];
-      [registerRequestDict setObject:@"" forKey:@"StatusID"];
-    
+           
     [self.view addSubview:keyBoardToolBar];
     keyBoardToolBar.center = CGPointMake(self.view.frame.size.width/2, 2000);
     
     [insuranceType_Self setImage:[UIImage imageNamed:@"checkBox.png"] forState:UIControlStateNormal];
     [insuranceType_Dependent setImage:[UIImage imageNamed:@"checkBox.png"] forState:UIControlStateNormal];
     
-    statusLabel.text=@"New";
+    statusLabel.text= fromEditCall == NO ? @"New" : @"Edit";
     
    // NSLog(@"mail value is =%@",[tmpArray objectAtIndex:12]);
     
-    insurance1IDTxtField.hidden=YES;
-    insuranceIdLabel.hidden=YES;
-    subscriberNameLabel.hidden=YES;
-    subscriberName.hidden=YES;
-    relationShip.hidden=YES;
-    relationShipLabel.hidden=YES;
-    relationPickerArray=[[NSMutableArray alloc] initWithCapacity:0];
+      relationPickerArray=[[NSMutableArray alloc] initWithCapacity:0];
     [relationPickerArray addObject:@"Spouce"];
     [relationPickerArray addObject:@"Child"];
     [relationPickerArray addObject:@"Others"];
     
-//    patientAccNoTxtField.text=@"111";
-//    firstNameTxtField.text=@"Logic";
-//    lastNameTxtField.text=@"Test";
-//    phoneNo1TxtField.text=@"11111111111";
-//    ageTxtField.text=@"50";
-//    genderTxtField.text=@"Male";
-//    address1TxtField.text=@"Banjara Hills";
-//    cityTxtField.text=@"Hyderabad";
-//    stateTxtField.text=@"Andhra Pradesh";
-//    zipTxtField.text=@"522001";
-//    dobTxtField.text=@"08/08/1975";
-//    insurance1IDTxtField.text=@"132";
-//    hicnTxtField.text=@"2";
-           
+    [self addInsurance:nil];
     
 }
 
@@ -1095,34 +1145,19 @@
 
 -(IBAction)insuranceTypeForSelf:(id)sender
 {
-        isSelf=YES;
-        [insuranceType_Self setImage:[UIImage imageNamed:@"CheckBoxHL.png"] forState:UIControlStateNormal];
-        [insuranceType_Dependent setImage:[UIImage imageNamed:@"checkBox.png"] forState:UIControlStateNormal];
-        //[insuranceType_Self addTarget:self action:@selector(adjustUIForInsurance) forControlEvents:UIControlEventTouchUpInside];
-    
-        insurance1IDTxtField.hidden=NO;
-        insuranceIdLabel.hidden=NO;
-        subscriberNameLabel.hidden=YES;
-        subscriberName.hidden=YES;
-        relationShip.hidden=YES;
-        relationShipLabel.hidden=YES;
-        
-       
+    insuranceType_Self.tag = 1;
+    insuranceType_Dependent.tag = 0;
+    [insuranceType_Self setImage:[UIImage imageNamed:@"CheckBoxHL.png"] forState:UIControlStateNormal];
+    [insuranceType_Dependent setImage:[UIImage imageNamed:@"checkBox.png"] forState:UIControlStateNormal];
+              
 }
+
 -(IBAction)insuranceTypeForDependent:(id)sender
 {
-        isDependent=YES;
+    insuranceType_Dependent.tag = 1;
+    insuranceType_Self.tag = 0;
         [insuranceType_Dependent setImage:[UIImage imageNamed:@"CheckBoxHL.png"] forState:UIControlStateNormal];
         [insuranceType_Self setImage:[UIImage imageNamed:@"checkBox.png"] forState:UIControlStateNormal];
-        //[insuranceType_Dependent addTarget:self action:@selector(adjustUIForInsurance) forControlEvents:UIControlEventTouchUpInside];
-    
-        insurance1IDTxtField.hidden=NO;
-        insuranceIdLabel.hidden=NO;
-        subscriberNameLabel.hidden=NO;
-        subscriberName.hidden=NO;
-        relationShip.hidden=NO;
-        relationShipLabel.hidden=NO;  
-
 }
 
 

@@ -15,12 +15,19 @@
 		CE5DA20015D0E16A00EB14CD /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA1FF15D0E16A00EB14CD /* Reachability.m */; };
 		CE5DA20415D1172E00EB14CD /* Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA20315D1172E00EB14CD /* Provider.m */; };
 		CE5DA20715D12C3300EB14CD /* MedTecNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA20615D12C3300EB14CD /* MedTecNetwork.m */; };
+		CE924DF915D8D07B00B5D979 /* InsuranceView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE924DF815D8D07B00B5D979 /* InsuranceView.m */; };
+		CE924DFC15D8D1C400B5D979 /* SearchHeader_new.png in Resources */ = {isa = PBXBuildFile; fileRef = CE924DFB15D8D1C400B5D979 /* SearchHeader_new.png */; };
 		CEA65CBD15D25C26006280B7 /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CBC15D25C25006280B7 /* Util.m */; };
 		CEA65CC015D25DD5006280B7 /* PatientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CBF15D25DD5006280B7 /* PatientInfo.m */; };
 		CEA65CC315D2A236006280B7 /* NSSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CC215D2A236006280B7 /* NSSNull.m */; };
 		CEAD64B915D4E6650024ABA3 /* SignatureViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CEAD64B715D4E6650024ABA3 /* SignatureViewController.m */; };
 		CEAD64C115D4E7510024ABA3 /* SignatureViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CEAD64C015D4E7510024ABA3 /* SignatureViewController.xib */; };
 		CEAD64C815D512E90024ABA3 /* SignatureView.m in Sources */ = {isa = PBXBuildFile; fileRef = CEAD64C715D512E90024ABA3 /* SignatureView.m */; };
+		CEBFA65415DCC70300CEB03D /* Accessory.m in Sources */ = {isa = PBXBuildFile; fileRef = CEBFA65315DCC70300CEB03D /* Accessory.m */; };
+		CEBFA66715DE0A8300CEB03D /* BillerInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = CEBFA66615DE0A8300CEB03D /* BillerInfo.m */; };
+		CEF1EA6215D6863200739251 /* PopoverController.m in Sources */ = {isa = PBXBuildFile; fileRef = CEF1EA6015D6863200739251 /* PopoverController.m */; };
+		CEF1EA6315D6863200739251 /* PopoverController.xib in Resources */ = {isa = PBXBuildFile; fileRef = CEF1EA6115D6863200739251 /* PopoverController.xib */; };
+		CEF2226815D79D4400B01802 /* LoginInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = CEF2226715D79D4400B01802 /* LoginInfo.m */; };
 		CF4868B915C7A3F800EA34E8 /* MessageTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = CF4868B815C7A3F800EA34E8 /* MessageTableViewCell.m */; };
 		CF4868BB15C7A41C00EA34E8 /* MessageTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = CF4868BA15C7A41C00EA34E8 /* MessageTableViewCell.xib */; };
 		CF4868C115C7BA7800EA34E8 /* MessageTableHeader.png in Resources */ = {isa = PBXBuildFile; fileRef = CF4868BF15C7BA7800EA34E8 /* MessageTableHeader.png */; };
@@ -133,6 +140,9 @@
 		CE5DA20315D1172E00EB14CD /* Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Provider.m; sourceTree = "<group>"; };
 		CE5DA20515D12C3300EB14CD /* MedTecNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedTecNetwork.h; sourceTree = "<group>"; };
 		CE5DA20615D12C3300EB14CD /* MedTecNetwork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedTecNetwork.m; sourceTree = "<group>"; };
+		CE924DF715D8D07B00B5D979 /* InsuranceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsuranceView.h; sourceTree = "<group>"; };
+		CE924DF815D8D07B00B5D979 /* InsuranceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsuranceView.m; sourceTree = "<group>"; };
+		CE924DFB15D8D1C400B5D979 /* SearchHeader_new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SearchHeader_new.png; sourceTree = "<group>"; };
 		CEA65CBB15D25C25006280B7 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		CEA65CBC15D25C25006280B7 /* Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Util.m; sourceTree = "<group>"; };
 		CEA65CBE15D25DD5006280B7 /* PatientInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientInfo.h; sourceTree = "<group>"; };
@@ -144,6 +154,15 @@
 		CEAD64C015D4E7510024ABA3 /* SignatureViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SignatureViewController.xib; sourceTree = "<group>"; };
 		CEAD64C615D512E90024ABA3 /* SignatureView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignatureView.h; sourceTree = "<group>"; };
 		CEAD64C715D512E90024ABA3 /* SignatureView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SignatureView.m; sourceTree = "<group>"; };
+		CEBFA65215DCC70300CEB03D /* Accessory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Accessory.h; sourceTree = "<group>"; };
+		CEBFA65315DCC70300CEB03D /* Accessory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Accessory.m; sourceTree = "<group>"; };
+		CEBFA66515DE0A8300CEB03D /* BillerInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BillerInfo.h; sourceTree = "<group>"; };
+		CEBFA66615DE0A8300CEB03D /* BillerInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BillerInfo.m; sourceTree = "<group>"; };
+		CEF1EA5F15D6863200739251 /* PopoverController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PopoverController.h; sourceTree = "<group>"; };
+		CEF1EA6015D6863200739251 /* PopoverController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PopoverController.m; sourceTree = "<group>"; };
+		CEF1EA6115D6863200739251 /* PopoverController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PopoverController.xib; sourceTree = "<group>"; };
+		CEF2226615D79D4400B01802 /* LoginInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoginInfo.h; sourceTree = "<group>"; };
+		CEF2226715D79D4400B01802 /* LoginInfo.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LoginInfo.m; sourceTree = "<group>"; };
 		CF4868B715C7A3F800EA34E8 /* MessageTableViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MessageTableViewCell.h; sourceTree = "<group>"; };
 		CF4868B815C7A3F800EA34E8 /* MessageTableViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MessageTableViewCell.m; sourceTree = "<group>"; };
 		CF4868BA15C7A41C00EA34E8 /* MessageTableViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MessageTableViewCell.xib; sourceTree = "<group>"; };
@@ -307,6 +326,12 @@
 				CEA65CBF15D25DD5006280B7 /* PatientInfo.m */,
 				CEA65CC115D2A235006280B7 /* NSSNull.h */,
 				CEA65CC215D2A236006280B7 /* NSSNull.m */,
+				CEF2226615D79D4400B01802 /* LoginInfo.h */,
+				CEF2226715D79D4400B01802 /* LoginInfo.m */,
+				CEBFA65215DCC70300CEB03D /* Accessory.h */,
+				CEBFA65315DCC70300CEB03D /* Accessory.m */,
+				CEBFA66515DE0A8300CEB03D /* BillerInfo.h */,
+				CEBFA66615DE0A8300CEB03D /* BillerInfo.m */,
 			);
 			name = Models;
 			sourceTree = "<group>";
@@ -339,6 +364,9 @@
 				CFEE133215C3EB6D00B75CD7 /* EditEncountersViewController.m */,
 				CEAD64B615D4E6650024ABA3 /* SignatureViewController.h */,
 				CEAD64B715D4E6650024ABA3 /* SignatureViewController.m */,
+				CEF1EA5F15D6863200739251 /* PopoverController.h */,
+				CEF1EA6015D6863200739251 /* PopoverController.m */,
+				CEF1EA6115D6863200739251 /* PopoverController.xib */,
 			);
 			name = "View Controllers";
 			sourceTree = "<group>";
@@ -368,6 +396,8 @@
 				CFBDC3F515CB904D00496195 /* AccessoryTableViewCell.m */,
 				F08B37BD15230C69002B67CF /* SearchPatientTableViewCell.h */,
 				F08B37BE15230C69002B67CF /* SearchPatientTableViewCell.m */,
+				CE924DF715D8D07B00B5D979 /* InsuranceView.h */,
+				CE924DF815D8D07B00B5D979 /* InsuranceView.m */,
 			);
 			name = "Custom Classes";
 			sourceTree = "<group>";
@@ -520,6 +550,7 @@
 		F0DA1D4C15217D84005AFB49 /* BackGround images */ = {
 			isa = PBXGroup;
 			children = (
+				CE924DFB15D8D1C400B5D979 /* SearchHeader_new.png */,
 				F0DA1D7615219E31005AFB49 /* contentarea.png */,
 				F08B37B41523070D002B67CF /* sc3-contentarea1.png */,
 				F08B37B715230713002B67CF /* sc3-contentarea2.png */,
@@ -674,6 +705,8 @@
 				CFBDC3F315CB901800496195 /* AccessoryTableViewCell.xib in Resources */,
 				CFBDC44415CBFCBD00496195 /* Accessory-header.png in Resources */,
 				CEAD64C115D4E7510024ABA3 /* SignatureViewController.xib in Resources */,
+				CEF1EA6315D6863200739251 /* PopoverController.xib in Resources */,
+				CE924DFC15D8D1C400B5D979 /* SearchHeader_new.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -721,6 +754,11 @@
 				CEA65CC315D2A236006280B7 /* NSSNull.m in Sources */,
 				CEAD64B915D4E6650024ABA3 /* SignatureViewController.m in Sources */,
 				CEAD64C815D512E90024ABA3 /* SignatureView.m in Sources */,
+				CEF1EA6215D6863200739251 /* PopoverController.m in Sources */,
+				CEF2226815D79D4400B01802 /* LoginInfo.m in Sources */,
+				CE924DF915D8D07B00B5D979 /* InsuranceView.m in Sources */,
+				CEBFA65415DCC70300CEB03D /* Accessory.m in Sources */,
+				CEBFA66715DE0A8300CEB03D /* BillerInfo.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
