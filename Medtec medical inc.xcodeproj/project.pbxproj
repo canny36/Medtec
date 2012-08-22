@@ -15,8 +15,12 @@
 		CE5DA20015D0E16A00EB14CD /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA1FF15D0E16A00EB14CD /* Reachability.m */; };
 		CE5DA20415D1172E00EB14CD /* Provider.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA20315D1172E00EB14CD /* Provider.m */; };
 		CE5DA20715D12C3300EB14CD /* MedTecNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = CE5DA20615D12C3300EB14CD /* MedTecNetwork.m */; };
+		CE889AAA15E385BF001B496B /* btn_radio_off.png in Resources */ = {isa = PBXBuildFile; fileRef = CE889AA815E385BF001B496B /* btn_radio_off.png */; };
+		CE889AAB15E385BF001B496B /* btn_radio_on_holo_light.png in Resources */ = {isa = PBXBuildFile; fileRef = CE889AA915E385BF001B496B /* btn_radio_on_holo_light.png */; };
+		CE889AAE15E38DCD001B496B /* btn_radio_off_holo_light.png in Resources */ = {isa = PBXBuildFile; fileRef = CE889AAD15E38DCD001B496B /* btn_radio_off_holo_light.png */; };
 		CE924DF915D8D07B00B5D979 /* InsuranceView.m in Sources */ = {isa = PBXBuildFile; fileRef = CE924DF815D8D07B00B5D979 /* InsuranceView.m */; };
 		CE924DFC15D8D1C400B5D979 /* SearchHeader_new.png in Resources */ = {isa = PBXBuildFile; fileRef = CE924DFB15D8D1C400B5D979 /* SearchHeader_new.png */; };
+		CEA1BA9015E36893003C4D97 /* RadioButton.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA1BA8F15E36893003C4D97 /* RadioButton.m */; };
 		CEA65CBD15D25C26006280B7 /* Util.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CBC15D25C25006280B7 /* Util.m */; };
 		CEA65CC015D25DD5006280B7 /* PatientInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CBF15D25DD5006280B7 /* PatientInfo.m */; };
 		CEA65CC315D2A236006280B7 /* NSSNull.m in Sources */ = {isa = PBXBuildFile; fileRef = CEA65CC215D2A236006280B7 /* NSSNull.m */; };
@@ -140,9 +144,14 @@
 		CE5DA20315D1172E00EB14CD /* Provider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Provider.m; sourceTree = "<group>"; };
 		CE5DA20515D12C3300EB14CD /* MedTecNetwork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MedTecNetwork.h; sourceTree = "<group>"; };
 		CE5DA20615D12C3300EB14CD /* MedTecNetwork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MedTecNetwork.m; sourceTree = "<group>"; };
+		CE889AA815E385BF001B496B /* btn_radio_off.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_radio_off.png; sourceTree = "<group>"; };
+		CE889AA915E385BF001B496B /* btn_radio_on_holo_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_radio_on_holo_light.png; sourceTree = "<group>"; };
+		CE889AAD15E38DCD001B496B /* btn_radio_off_holo_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_radio_off_holo_light.png; sourceTree = "<group>"; };
 		CE924DF715D8D07B00B5D979 /* InsuranceView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsuranceView.h; sourceTree = "<group>"; };
 		CE924DF815D8D07B00B5D979 /* InsuranceView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InsuranceView.m; sourceTree = "<group>"; };
 		CE924DFB15D8D1C400B5D979 /* SearchHeader_new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = SearchHeader_new.png; sourceTree = "<group>"; };
+		CEA1BA8E15E36893003C4D97 /* RadioButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RadioButton.h; sourceTree = "<group>"; };
+		CEA1BA8F15E36893003C4D97 /* RadioButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RadioButton.m; sourceTree = "<group>"; };
 		CEA65CBB15D25C25006280B7 /* Util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Util.h; sourceTree = "<group>"; };
 		CEA65CBC15D25C25006280B7 /* Util.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Util.m; sourceTree = "<group>"; };
 		CEA65CBE15D25DD5006280B7 /* PatientInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PatientInfo.h; sourceTree = "<group>"; };
@@ -398,6 +407,8 @@
 				F08B37BE15230C69002B67CF /* SearchPatientTableViewCell.m */,
 				CE924DF715D8D07B00B5D979 /* InsuranceView.h */,
 				CE924DF815D8D07B00B5D979 /* InsuranceView.m */,
+				CEA1BA8E15E36893003C4D97 /* RadioButton.h */,
+				CEA1BA8F15E36893003C4D97 /* RadioButton.m */,
 			);
 			name = "Custom Classes";
 			sourceTree = "<group>";
@@ -578,6 +589,9 @@
 		F0DA1D881521B917005AFB49 /* Login images */ = {
 			isa = PBXGroup;
 			children = (
+				CE889AAD15E38DCD001B496B /* btn_radio_off_holo_light.png */,
+				CE889AA815E385BF001B496B /* btn_radio_off.png */,
+				CE889AA915E385BF001B496B /* btn_radio_on_holo_light.png */,
 				F0DA1D8A1521B933005AFB49 /* login.png */,
 				F0DA1D8C1521B93B005AFB49 /* loginroll.png */,
 				F0DA1D901521B94C005AFB49 /* forgotpasswordroll.png */,
@@ -707,6 +721,9 @@
 				CEAD64C115D4E7510024ABA3 /* SignatureViewController.xib in Resources */,
 				CEF1EA6315D6863200739251 /* PopoverController.xib in Resources */,
 				CE924DFC15D8D1C400B5D979 /* SearchHeader_new.png in Resources */,
+				CE889AAA15E385BF001B496B /* btn_radio_off.png in Resources */,
+				CE889AAB15E385BF001B496B /* btn_radio_on_holo_light.png in Resources */,
+				CE889AAE15E38DCD001B496B /* btn_radio_off_holo_light.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +776,7 @@
 				CE924DF915D8D07B00B5D979 /* InsuranceView.m in Sources */,
 				CEBFA65415DCC70300CEB03D /* Accessory.m in Sources */,
 				CEBFA66715DE0A8300CEB03D /* BillerInfo.m in Sources */,
+				CEA1BA9015E36893003C4D97 /* RadioButton.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

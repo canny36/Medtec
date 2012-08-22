@@ -58,6 +58,14 @@ static UIImage *uncheckedImage;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    UIBarButtonItem *leftBack = [[UIBarButtonItem alloc]initWithTitle:@"Back" style:UIBarButtonItemStyleBordered target:self action:@selector(backAction)];
+    self.navigationItem.leftBarButtonItem = leftBack;
+
+    [leftBack release]; 
+//    self.navigationController.navigationBarHidden = NO;
+//    self.navigationItem.hidesBackButton = NO;
+    self.navigationController.navigationBar.backItem.hidesBackButton = NO;
         [scrollView setContentSize:CGSizeMake(700, 700)];
     
     appdelegate = (Medtec_medical_incAppDelegate*)[[UIApplication sharedApplication] delegate];
@@ -67,10 +75,7 @@ static UIImage *uncheckedImage;
     
     checkedImage = [UIImage imageNamed:@"CheckBoxHL.png"];
     uncheckedImage = [UIImage imageNamed:@"checkBox.png"];
-
-    
-    self.navigationController.navigationBar.backItem.hidesBackButton = NO;
-//     [self getEncounters];
+   
     [self getEncounter];
 }
 
@@ -186,6 +191,13 @@ static UIImage *uncheckedImage;
   
 }
 
+-(void)backAction
+{
+    
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
 -(NSString*)getProviderName:(int)_providerId{
     NSMutableArray *array = appdelegate.providersArray;
     for (int i = 0 , size = [array count]; i< size ; i++) {
@@ -273,7 +285,11 @@ static UIImage *uncheckedImage;
         case CALL_SINGLEENCOUNTER:
             [self filldata:result];
             break;
+        case CALL_ACCESSORIES:
             
+           appdelegate.accessoryArray =  [[Accessory collection:result] retain];
+            [accessoryTable reloadData];
+            break;
         default:
             break;
     }
@@ -431,8 +447,7 @@ static UIImage *uncheckedImage;
     {
         cell.backgroundColor=[UIColor colorWithRed:(233.0/255.0) green:(237.0/255.0) blue:(244.0/255.0) alpha:1.0];   
     }
-    
-    
+
 }
 
 - (void)viewDidUnload

@@ -21,14 +21,17 @@
 #import "InsuranceView.h"
 
 #define REGISTER_URL @"http://www.medtecp3.com/MedtecMobilesServices/CreateNewPatient"
-#define INSURANCE_VIEW_HEIGHT 145
+#define INSURANCE_VIEW_HEIGHT 230
 #define INSURANCE_VIEW_HEIGHT_SELF 50
+
+#define INSURANCE_TYPE_SELF @"Self"
+#define INSURACE_TYPE_DEP @"Dependent"
 
 @interface RegisterPatientViewController()
 
 -(NSString*)validate;
 -(void) showAlert:(NSString*)message:(id<UIAlertViewDelegate>)delegate;
--(void) createRequestForRegistration;
+
 -(NSMutableDictionary*)createRequestBuffer;
 -(void)registerPatient:(NSMutableDictionary*)bundle;
 -(NSMutableDictionary*)tempReq;
@@ -49,6 +52,8 @@
 @synthesize patientInfo;
 
 static float insuranceBgHeight;
+static UIImage *checkedImage;
+static UIImage *uncheckedImage;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -92,17 +97,33 @@ static float insuranceBgHeight;
     
    NSString *invalidField = [self validate];
     if (invalidField != nil) {
-        [self showAlert: [NSString stringWithFormat:@"Please enter %@ ",invalidField]:self];
+        [self showAlert: [NSString stringWithFormat:@"Please enter %@ ",invalidField]:nil];
         return;
     }
 
     NSMutableDictionary *bundle = [self createRequestBuffer];
     if (fromEditCall == NO) {
+//        [bundle setValue:[NSNumber numberWithInt:0] forKey:@"Visit"];
         [self registerPatient:bundle];
     }else{
         [self editPatient:bundle];
     }
 
+}
+
+-(IBAction)addToVisit:(id)sender{
+
+    NSMutableDictionary *bundle = [self createRequestBuffer];
+    [bundle setValue:[NSNumber numberWithInt:1] forKey:@"Visit"];
+    [self registerPatient:bundle];
+}
+
+- (IBAction)onSelfPayClick{
+ 
+    selfPay.tag = !selfPay.tag;
+    UIImage *image = selfPay.tag == 1 ? checkedImage : uncheckedImage;
+    [selfPay setImage:image forState:UIControlStateNormal];
+    
 }
 
 
@@ -119,7 +140,7 @@ static float insuranceBgHeight;
             
            InsuranceView *_lastView =  [[subViews objectAtIndex:count-1] retain];
             
-            CGRect _frame = CGRectMake(0 , _lastView.frame.origin.y + 143 + 10 , insuranceHolder.frame.size.width, 143);
+            CGRect _frame = CGRectMake(0 , _lastView.frame.origin.y + INSURANCE_VIEW_HEIGHT+ 10 , insuranceHolder.frame.size.width,INSURANCE_VIEW_HEIGHT);
             
             [subViews release];
             [_lastView release];
@@ -133,7 +154,7 @@ static float insuranceBgHeight;
          }
         else
         {
-            CGRect _frame = CGRectMake(0, 10, insuranceHolder.frame.size.width, 143);
+            CGRect _frame = CGRectMake(0, 10, insuranceHolder.frame.size.width, INSURANCE_VIEW_HEIGHT);
             
             InsuranceView *insuranceView = [[InsuranceView alloc]initWithFrame:_frame withRemove:NO isDependent:YES];
              insuranceView.delegate = self;
@@ -208,7 +229,7 @@ static float insuranceBgHeight;
     
   int count = [insuranceHolder subviews].count;
     if (count < 3) {
-        addInsuranceBtn.hidden = YES;
+        addInsuranceBtn.hidden = NO;
     }
     
     CGRect _frame = insuranceHolder.frame;
@@ -283,7 +304,7 @@ static float insuranceBgHeight;
         array =  [insuranceHolder subviews];
         InsuranceView *view = [array objectAtIndex:1];
         view.insuranceIdField.text = value;
-        value =  [self getValue:@" Sub2FirstName":bundle];
+        value =  [self getValue:@"Sub2FirstName":bundle];
         view.subscriberNameField.text = value;
     }
     
@@ -294,7 +315,7 @@ static float insuranceBgHeight;
         array =  [insuranceHolder subviews];
         InsuranceView *view = [array objectAtIndex:2];
         view.insuranceIdField.text = value;
-        value =  [self getValue:@" Sub2FirstName":bundle];
+        value =  [self getValue:@"Sub2FirstName":bundle];
         view.subscriberNameField.text = value;
     }
 
@@ -397,7 +418,7 @@ static float insuranceBgHeight;
         {
             
             NSString *message = fromEditCall ? @"Successfully updated patient info ." : @"Registered successfully ";
-            [self showAlert:message : self];
+            [self showAlert:message : nil];
             
          }
             
@@ -513,7 +534,45 @@ static float insuranceBgHeight;
         [bundle setObject:[NSNumber numberWithInt:provider.statusId] forKey:@"StatusID"];
         [bundle setObject:[NSNumber numberWithInt:provider.userId] forKey:@"ProviderID"];
 
-        
+        [bundle setObject:[NSNumber numberWithInt:selfPay.tag] forKey:@"SelfPay"];
+        if (selfPay.tag == 1) {
+            NSString *insurance_type = insuranceType_Self.tag == 1 ? INSURANCE_TYPE_SELF : INSURACE_TYPE_DEP;
+            [bundle setValue:insurance_type forKey:@"InsuranceType"];
+            
+           NSArray *array =  [insuranceHolder subviews];
+            for (int i=0, count = array.count; i<count; i++) {
+                InsuranceView *view = nil;
+                switch (i) {
+                    case 0:
+                      view =  [array objectAtIndex:i];
+                        [bundle setValue:view.insuranceIdField.text forKey:@"Insurance1ID"];
+                        if (view.isDependent == YES) {
+                            [bundle setValue:view.subscriberNameField.text forKey:@"Sub1FirstName"];
+                          [bundle setValue:view.relationshipField.text forKey:@"Sub1LastName"];
+                        }
+                        break;
+                    case 1:
+                        view =  [array objectAtIndex:i];
+                        [bundle setValue:view.insuranceIdField.text forKey:@"Insurance2ID"];
+                        if (view.isDependent == YES) {
+                            [bundle setValue:view.subscriberNameField.text forKey:@"Sub2FirstName"];
+                            [bundle setValue:view.relationshipField.text forKey:@"Sub2LastName"];
+                        }
+                        break;
+                    case 2:
+                        view =  [array objectAtIndex:i];
+                        [bundle setValue:view.insuranceIdField.text forKey:@"Insurance2ID"];
+                        if (view.isDependent == YES) {
+                            [bundle setValue:view.subscriberNameField.text forKey:@"Sub2FirstName"];
+                            [bundle setValue:view.relationshipField.text forKey:@"Sub2LastName"];
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+      
     }
   
     return bundle;
@@ -841,11 +900,7 @@ static float insuranceBgHeight;
     }
 
     [self setAnimationToScrollView];
-
-        
-//    if((textField==ageTxtField)||(textField==sub1IDTxtField)||(textField==sub2IDTxtField) ||(textField==sub3IDTxtField)||(textField==heightTxtField)||(textField==weightTxtField)||(textField==guarantor1IDTxtField)||(textField==guarantor2IDTxtField)||(textField==guarantor3IDTxtField)||(textField==phoneNo1TxtField)||(textField==phoneNo2TxtField))
-//        textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
-    
+ 
         if((textField==ageTxtField)||(textField==phoneNo1TxtField)||(textField==emergencyContactTxtField)||(textField==zipTxtField))
            textField.keyboardType = UIKeyboardTypeNumbersAndPunctuation;
         
@@ -1065,39 +1120,9 @@ static float insuranceBgHeight;
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
     
-    
-   
-    
-    if (fromEditCall == YES && patientInfo != nil)
-    {
-       
-        
-        NSLog(@" EDIT PATIENT ");
-        
-        NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
-        [bundle setObject:[ NSNumber numberWithInt: patientInfo.practiceId ]forKey:@"PracticeID"];
-         [bundle setObject:[NSNumber numberWithInt:patientInfo.patientId] forKey:@"PatientID"];
-        
-        [self getPatient:bundle];
-            
-//        emergencyContactTxtField.text=[fromEditDict objectForKey:@"Emergency_Contact_Num"];
-//        practiseIdTxtField.text= patientInfo.practiceId;
-//        patientAccNoTxtField.text=[fromEditDict objectForKey:@"PatientAcctNum"];
-//        firstNameTxtField.text= patientInfo.firstname;
-//        middleNameTxtField.text=[fromEditDict objectForKey:@"MiddleName"];
-        lastNameTxtField.text= patientInfo.lastname;
-//        emailIdTxtField.text=[fromEditDict objectForKey:@"Email"];
-        phoneNo1TxtField.text= [NSString stringWithFormat:@"%d",patientInfo.phoneNo];
-        
-    //phoneNo2TxtField.text=[fromEditDict objectForKey:@"PhoneNumber2"];
-        
-        NSString *tmpStr = [fromEditDict objectForKey:@"Age"];
-       // NSLog(@"%@",tmpStr); 
-        [tmpStr retain];
+    checkedImage = [UIImage imageNamed:@"CheckBoxHL.png"];
+    uncheckedImage = [UIImage imageNamed:@"checkBox.png"];
 
-        dobTxtField.text= patientInfo.dob;
-   
-    }
     
     genderArray = [[NSArray alloc]initWithObjects:@"Male",@"Female",@"other", nil];
     
@@ -1135,6 +1160,42 @@ static float insuranceBgHeight;
     [relationPickerArray addObject:@"Others"];
     
     [self addInsurance:nil];
+    
+    
+    selfPay.tag = 0;
+    [selfPay setImage:uncheckedImage forState:UIControlStateNormal];
+    
+    if (fromEditCall == YES && patientInfo != nil)
+    {
+        
+        
+        NSLog(@" EDIT PATIENT ");
+        
+        NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+        [bundle setObject:[ NSNumber numberWithInt: patientInfo.practiceId ]forKey:@"PracticeID"];
+        [bundle setObject:[NSNumber numberWithInt:patientInfo.patientId] forKey:@"PatientID"];
+        
+        [self getPatient:bundle];
+        
+        //        emergencyContactTxtField.text=[fromEditDict objectForKey:@"Emergency_Contact_Num"];
+        //        practiseIdTxtField.text= patientInfo.practiceId;
+        //        patientAccNoTxtField.text=[fromEditDict objectForKey:@"PatientAcctNum"];
+        //        firstNameTxtField.text= patientInfo.firstname;
+        //        middleNameTxtField.text=[fromEditDict objectForKey:@"MiddleName"];
+        lastNameTxtField.text= patientInfo.lastname;
+        //        emailIdTxtField.text=[fromEditDict objectForKey:@"Email"];
+        phoneNo1TxtField.text= [NSString stringWithFormat:@"%d",patientInfo.phoneNo];
+        
+        //phoneNo2TxtField.text=[fromEditDict objectForKey:@"PhoneNumber2"];
+        
+        NSString *tmpStr = [fromEditDict objectForKey:@"Age"];
+        // NSLog(@"%@",tmpStr); 
+        [tmpStr retain];
+        
+        dobTxtField.text= patientInfo.dob;
+        
+    }
+    
     
 }
 

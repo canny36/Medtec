@@ -99,6 +99,8 @@
     NSMutableArray *relationPickerArray;
     
     IBOutlet UIButton *addInsuranceBtn;
+    
+    IBOutlet UIButton *selfPay;
 
 }
 
@@ -114,16 +116,19 @@
 -(void)textFieldsResignMethods;
 -(void)callRegisterWebServices;
 -(void)cancelConnection:(NSTimer *)myTimer;
+
 -(IBAction)addOrEditDemography;
 -(IBAction)addInsurance:(id)sender;
+
 -(void)setAnimationToScrollView;
 -(void)popView:(int)value :(NSString *)name;
 
 //keyboard actions
-
+- (IBAction) onSelfPayClick;
 - (IBAction) nextTextField;
 - (IBAction) prevTextField;
 -(IBAction)dobSelectedAction:(id)sender;
+
 -(void)keyBoardToolBaranimation:(int)value;
 -(void)getProviderIDS;
 
@@ -132,6 +137,8 @@
 
 -(IBAction)insuranceTypeForSelf:(id)sender;
 -(IBAction)insuranceTypeForDependent:(id)sender;
+
+-(IBAction)addToVisit:(id)sender;
 
 -(void)testdata;
 -(void)updatePatientInfo:(NSMutableDictionary*)bundle;    

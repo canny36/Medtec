@@ -67,6 +67,15 @@ static MedTecNetwork *instance;
     }
 }
 
+
+-(void)getTodaySchedules:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate{
+    NSLog(@" get patient info %@ ", URL_GETTODAYSCHEDULES);
+    
+    curCall = CALL_TODAY_VISITS;
+    delegate = _delegate;
+    [self getdataFromServerWithURl:[NSURL URLWithString:URL_GETTODAYSCHEDULES] :bundle];
+}
+
 -(void)getPatientInfo:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
     
     NSLog(@" get patient info %@ ", URL_GETPATIENTINFO);
@@ -111,6 +120,7 @@ static MedTecNetwork *instance;
 }
 
 -(void)registerPatients:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate{
+     NSLog(@" Searchpatients url =  %@",URL_REGISTER);
     curCall = CALL_REGISTER;
      delegate = _delegate;
     [self getdataFromServerWithURl:[NSURL URLWithString:URL_REGISTER] :bundle];

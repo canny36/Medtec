@@ -22,7 +22,8 @@
     BOOL isDependent;
     id<InsuranceDelegate> delegate;
     
-    UITextField *insuranceIdField;
+     UITextField *insuranceNameField;
+     UITextField *insuranceIdField;
      UITextField *subscriberNameField;
      UITextField *relationshipField;
     
@@ -32,8 +33,9 @@
 @property(nonatomic,assign)id delegate;
 
 @property(nonatomic , retain)UITextField *insuranceIdField;
-@property(nonatomic , retain)UITextField *subscriberNameField;;
+@property(nonatomic , retain)UITextField *subscriberNameField;
 @property(nonatomic , retain)UITextField *relationshipField;
+@property(nonatomic , retain)UITextField *insuranceNameField;
 
 - (id)initWithFrame:(CGRect)frame withRemove :(BOOL)withRemove isDependent : (BOOL)_isDependent;
 

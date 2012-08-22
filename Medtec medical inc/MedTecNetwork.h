@@ -29,10 +29,12 @@
 #define CALL_CREATE_NEW_ENCOUNTER 9
 #define CALL_ACCESSORIES 10
 #define CALL_BILLERS 11
+#define CALL_TODAY_VISITS 12
 
 #define HOST_PRODUCTION @"http://www.medtecp3.com/"
 #define HOST_LOCAL @"http://192.168.1.100/TestingApps/"
-#define URL_REGISTER @"http://www.medtecp3.com/MedtecMobilesServices/CreateNewPatient"
+
+#define URL_REGISTER @"http://192.168.1.100/TestingApps/MedtecMobilesServices/CreateNewPatient"
 #define URL_SEARCH_PATIENT @"http://192.168.1.100/TestingApps/MedtecMobilesServices/GetSearchPatients"
 #define URL_ALLPATIENTS @"http://192.168.1.100/TestingApps/MedtecMobilesServices/GetAllPatientInfo"
 #define URL_EDIT_PATIENT @"http://www.medtecp3.com/MedtecMobilesServices/EditPatientInfo"
@@ -46,7 +48,7 @@
 #define URL_CreatePatientNewEncounter @"http://192.168.1.100/TestingApps/MedtecMobilesServices/CreatePatientNewEncounter"
 #define URL_GETACCESSORIES @"http://192.168.1.100/TestingApps/MedtecMobilesServices/GetEquipmentAccessories"
 #define URL_GetBillerMessages @"http://192.168.1.100/TestingApps/MedtecMobilesServices/GetBillerMessages"
-
+#define URL_GETTODAYSCHEDULES @"http://192.168.1.100/TestingApps/MedtecMobilesServices/GetTodaySchedules"
 
 //#define APPEND(STR1 , STR2 )  #STR1 ## #STR2
 
@@ -75,5 +77,6 @@
 -(void)getAccessories:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate;
 
 -(void)getBillerMsgs:(NSMutableDictionary*)bundle : (id<NetworkDelegate>)_delegate;
+-(void)getTodaySchedules:(NSMutableDictionary*)bundle:(id<NetworkDelegate>)_delegate;
 
 @end

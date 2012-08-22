@@ -175,9 +175,6 @@ static UIImage *uncheckedImage;
     }else{
         encounterListTable.dataSource = self;
         encounterListTable.delegate = self;
-        
-       
-        
     }
     
      [self getEncounters];

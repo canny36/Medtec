@@ -27,7 +27,7 @@
 
 @interface MainViewController()
 
-
+-(void)getTodayVisits;
 -(void)getMillerMsgs;
 @end
 
@@ -142,7 +142,7 @@ static MainViewController *mainViewControllerSharedData;
 #pragma mark - View lifecycle
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self.navigationController setNavigationBarHidden:NO];
+//    [self.navigationController setNavigationBarHidden:NO];
     
     NSDate *currentDateTime = [NSDate date];  
     NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];   
@@ -150,11 +150,9 @@ static MainViewController *mainViewControllerSharedData;
     currentDate.text = [dateFormatter stringFromDate:currentDateTime];    
     NSLog(@"\nCurrent date is :%@", currentDate.text );
     [dateFormatter release];
-    
-//    if (curOption !=-1)
-//    {
-//        [self getCurrentEncounters];
-//    }
+
+     [self getTodayVisits];
+
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -163,7 +161,7 @@ static MainViewController *mainViewControllerSharedData;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.navigationItem.hidesBackButton = TRUE;
+    self.navigationItem.hidesBackButton = YES;
     //visitsTable.hidden=YES;    
     appDelegate = (Medtec_medical_incAppDelegate *)[[UIApplication sharedApplication] delegate];    
     
@@ -178,7 +176,7 @@ static MainViewController *mainViewControllerSharedData;
     
     
     [self getMillerMsgs];
-    
+   
     
 }
 
@@ -191,6 +189,19 @@ static MainViewController *mainViewControllerSharedData;
     NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
     [bundle setValue:[NSNumber numberWithInt:info.practiceID] forKey:@"PracticeID"];
     [medtecNetwork getBillerMsgs:bundle :self];
+    
+}
+
+
+
+-(void)getTodayVisits{
+    
+    LoginInfo *info =  appDelegate.loginInfo;
+    
+    MedTecNetwork *medtecNetwork = [MedTecNetwork shareInstance];
+    NSMutableDictionary *bundle = [[NSMutableDictionary alloc]init];
+    [bundle setValue:[NSNumber numberWithInt:info.practiceID] forKey:@"PracticeID"];
+    [medtecNetwork getTodaySchedules:bundle :self];
     
 }
 
